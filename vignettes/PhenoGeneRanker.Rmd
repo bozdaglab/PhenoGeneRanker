@@ -99,7 +99,7 @@ walkMatrix <-CreateWalkMatrix('file.txt')
 CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
 ```
 
-This method returns a list containing the walk matrix, a sorted list of gene pool nodes, a sorted list of phenotype pool nodes, the connectivity of the genes, the connectivity of the phenotypes the number of genes, the number of phenotypes, the number of gene pool nodes,  and the number of phenotype pool nodes. You can access these elements as shown below. 
+This method returns a list containing the walk matrix, a sorted list of gene pool nodes, a sorted list of phenotype pool nodes, the connectivity of the genes, the connectivity of the phenotypes the number of genes, the number of phenotypes, the number of gene pool nodes,  and the number of phenotype pool nodes. You can access each of these elements as shown below. 
 ```{r eval=FALSE}
 walkMatrix[[“WM”]] # accesses the walk matrix itself
 walkMatrix[[“genes”]] # accesses the sorted gene pool nodes
@@ -115,7 +115,17 @@ walkMatrix[[“M”]] # the number of phenotype pool nodes
 
 ## <a id = "randomwalkrestart"></a> RandomWalkRestart
 
-This method runs the random walk with restart on the provided walkmatrix transition matrix of multiplex heterogeneous networks. When random walk converges to steady state then the random walk stops. If the parameter generatePvalue is FALSE, it returns a data frame including gene and phenotype names, ranks and steady state scores of the genes and phenotypes. If generatePvalue is TRUE then it generates p-values along with the ranks with respect to offset value of 100.
+This method runs the random walk with restart on the provided walk matrix. This method uses a parameter called *geneSeeds* and *phenoSeeds*, wich are vectors containing the names of genes and phenotypes that you would like to use in the ranking process. These are vectors that store strings of gene and phenotype names.
+
+The method also uses a parameter called *generatePValues* which determines the resulting data frame. If the parameter *generatePvalue* is FALSE, the method returns a data frame including gene names and the steady-state scores of the genes. These are sorted in their rank order. The first index is rank 1 and the rest of the genes' ranks below correspond to their indices. If *generatePvalue* is TRUE then it generates p-values along with the ranks with respect to offset value of 100.
+
+The parameter *numCores* causes the algorithm to run faster by allowing parallel processing throughout the number of cores available. For the most efficient runtime, it is recommended that the detectCores() method from the parallel package is used for this parameter. 
+
+In order to control the global restart probability, you can change the *r* parameter value. It has a range from 0 to 1 and it has a default value of 0.7.
+
+The individual network restart probability can be controlled by the parameter *eta*. Eta has a range from 0 to 1 and it has a default value of 0.5.
+
+The last two parameters are optional if you would like to control the amount of weight given to each of the layer files. *tau* is a vector that stores weights for each of the 'gene' input files that were added in CreateWalkMatrix. Each index of the vector corresponds to the order of the files in your input file. They must sum up to the same number of gene files you added. *phi* is a vector that stores weights for each of the 'phenotype'  input files that were added in CreateWalkMatrix. Each index of the vector corresponds to the order of the files in your input file. They must sum up to the same number of phenotype files you added. If you want to have each file equally weighted, you do not need to input these vectors into the method.
 
 ```{r eval=FALSE}
 RWR <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(), TRUE)
@@ -140,7 +150,6 @@ gene33  5.779120e-04
 ...     ...     ...
 ```
 
-Due to the nature of this method, it can return a different output depending on the "generatePvalue" parameter. If the parameter "generatePValue" is TRUE, then this method returns a rank sorted data frame with three columns for the gene name, score, p-value. If "generatePValue" is FALSE, then it creates a data frame of all of the genes ranked. It has a column of the rank, gene name, and random walk scores for each gene or phenotype.
 
 ## <a id = "Example-Workflow"></a> Example Workflow
 
