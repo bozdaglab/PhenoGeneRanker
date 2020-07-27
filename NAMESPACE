@@ -1,4 +1,7 @@
 export('CreateWalkMatrix')
 export('RandomWalkRestarts')
 
-import('igraph', 'Matrix', 'foreach', 'doParallel', 'dplyr')
+import('Matrix', 'foreach', 'doParallel')
+importFrom('igraph', 'V', 'add_vertices', 'as_adjacency_matrix')
+importFrom('dplyr', '%>%', 'group_by', 'sample_n', 'bind_cols')
+importFrom('dplyr', '%>%', 'group_by', 'sample_n', 'bind_cols')
