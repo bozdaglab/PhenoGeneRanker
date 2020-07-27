@@ -635,6 +635,9 @@ rankGenes <- function(Number_Genes, Number_Layers, Results, Seeds) {
   genes_rank_sort_NoSeeds <- 
     genes_rank_sort_NoSeeds[, c("Rank", "Gene", "Score")]
   
+  # genes_rank_sort_NoSeeds <- 
+  #   genes_rank_sort_NoSeeds[, c("Gene", "Score")]
+  # 
   return(genes_rank_sort_NoSeeds)
 }
 RankPhenotypes <- function(Number_Genes, Num_Gene_Layers, Number_Phenotypes, 
@@ -704,13 +707,13 @@ GeometricMean <- function(Scores, L, N) {
 #' @param r This parameter controls the global restart probability.
 #' @param eta This parameter controls the individual networks restart
 #'   probability.
-#' @param tau This is a vector that stores weights for each of the 'gene' input
+#' @aliases tau This is a vector that stores weights for each of the 'gene' input
 #'   files that were added in CreateWalkMatrix. Each index of the vector
 #'   corresponds to the order of the files in your input file. They must sum up
 #'   to the same number of gene files you added. If you want to have each file
 #'   equally weighted, you do not need to input this vector to the parameters of
 #'   this method.
-#' @param phi This is a vector that stores weights for each of the 'phenotype'
+#' @aliases phi This is a vector that stores weights for each of the 'phenotype'
 #'   input files that were added in CreateWalkMatrix. Each index of the vector
 #'   corresponds to the order of the files in your input file. They must sum up
 #'   to the same number of phenotype files you added. If you want to have each
@@ -724,10 +727,14 @@ GeometricMean <- function(Scores, L, N) {
 #'   name, and steady state scores for each gene or phenotype.
 #'
 #' @examples
-#' ##RWR <- RandomWalkRestarts(walkMatrix, c('gene1', 'gene2'), c(), TRUE)
-#' ##RWR <- RandomWalkRestarts(CreateWalkMatrix('myFile.txt'),c('gene1'), c('phenotype1', 'phenotype2'), FALSE)
-#' ##RWR <- RandomWalkRestarts(CreateWalkMatrix('myFile.txt'),c('gene1'), c(), FALSE, 12, 0.7, 0.6, “tau”=(1,0.5,1.5), “phi”=(1,0.5,1.5
-RandomWalkRestarts <- function(walk_Matrix, geneSeeds, phenoSeeds, 
+#' \dontrun{
+#' RWR <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(), TRUE)
+#' RWR <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
+#'        c('phenotype1', 'phenotype2'), FALSE)
+#' RWR <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c(), 
+#'        TRUE, 12, 0.7, 0.6, “tau”=(1,0.5,1.5), “phi”=(1,0.5,1.5))
+#' }
+RandomWalkRestart <- function(walk_Matrix, geneSeeds, phenoSeeds, 
                                generatePValue = TRUE, numCores = 1,
                                r = 0.7, eta = 0.5) {
   
@@ -800,7 +807,7 @@ RandomWalkRestarts <- function(walk_Matrix, geneSeeds, phenoSeeds,
                                             SeedList[["Pheno_Seeds"]])
     # RandomSeeds calculate random ranks Walk_Matrix, geneSeedsList,
     # phenoSeedsList, N, LG, LP, eta, tau, phi, r, funcs, no.cores=4
-    Rand_Seed_Gene_Rank <- RandomWalkRestartsBatch(walk_Matrix[["WM"]], 
+    Rand_Seed_Gene_Rank <- RandomWalkRestartBatch(walk_Matrix[["WM"]], 
                                                    RandomSeeds[["gene"]], 
                                                    RandomSeeds[["phenotype"]], 
                                                    walk_Matrix[["N"]], 
@@ -824,7 +831,7 @@ RandomWalkRestarts <- function(walk_Matrix, geneSeeds, phenoSeeds,
     return(RWGeneRankDF)
   }
 }
-RandomWalkRestartsSingle <- function(Walk_Matrix, r, Seeds_Score) {
+RandomWalkRestartSingle <- function(Walk_Matrix, r, Seeds_Score) {
   #We define the threshold and the number maximum of iterations for the randon
   #walker. Seeds_Score <- GetSeedScores(geneSeeds,CultSeeds, Parameters$eta, LG,
   #LC, Parameters$tau/LG, Parameters$phi/LC)
@@ -916,8 +923,10 @@ GetConnectivity <- function(NetworkDF, gene_pool_nodes_sorted,
 #' @export
 #'
 #' @examples
-#' #CreateWalkMatrix('myInput.txt')
-#' #CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
+#' \dontrun{
+#' CreateWalkMatrix('myInput.txt')
+#' CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
+#' }
 CreateWalkMatrix <- function(inputFileName, numCores = 1, delta = 0.5, 
                              zeta = 0.5, lambda = 0.5) {
   network_range <<- c(0.001, 1)
@@ -1072,7 +1081,7 @@ GenerateRandomSeeds <- function(Seeds, ConnectivityDF, S = 1000, no.groups = 10,
   seed.set.size <- length(Seeds)
   sample_size <- ceiling((S/no.groups) * seed.set.size)
   set.seed(1)
-  library(dplyr)
+  #library(dplyr)
   
   # Stratified Sample 'sample_size' nodes from each group as Random Seeds
   ConnectivityDF <- ConnectivityDF[which(!ConnectivityDF$Node %in% Seeds), ] 
@@ -1195,14 +1204,14 @@ CalculatePvalues <- function(RWGeneRanks, Rand_Seed_Gene_Rank, no.cores) {
   dfRanks
 }
 
-RandomWalkRestartsBatch <- function(Walk_Matrix, geneSeedsList, phenoSeedsList, 
+RandomWalkRestartBatch <- function(Walk_Matrix, geneSeedsList, phenoSeedsList, 
                                     N, LG, LP, eta, tau, phi, r, no.cores = 4) {
   # t <- Sys.time()
   cl <- makeCluster(no.cores)
   registerDoParallel(cl)
   seedsLength <- ifelse(length(geneSeedsList) != 0, length(geneSeedsList), 
                         length(phenoSeedsList))
-  funcs <- c("GetSeedScores", "RandomWalkRestartsSingle", "rank_genes", 
+  funcs <- c("GetSeedScores", "RandomWalkRestartSingle", "rank_genes", 
              "GeometricMean")
   
   Rand_Seed_Gene_Rank <- foreach(i = 1:seedsLength, .combine = cbind, .export =
@@ -1220,7 +1229,7 @@ RandomWalkRestartsBatch <- function(Walk_Matrix, geneSeedsList, phenoSeedsList,
                                                                 LP, tau, phi)
       }
                                    
-      Rand_Seed_Res <- RandomWalkRestartsSingle(Walk_Matrix, r, Seeds_Score)
+      Rand_Seed_Res <- RandomWalkRestartSingle(Walk_Matrix, r, Seeds_Score)
       Rand_Seed_Gene_Rank <- rankGenes(N, LG, Rand_Seed_Res, 
                                        ifelse(length(geneSeedsList) !=  
                                             0, geneSeedsList[[i]], vector()))
