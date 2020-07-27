@@ -32,5 +32,6 @@ library(PhenoGeneRankerPackage)
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  walkMatrix <-CreateWalkMatrix('file.txt')
-#  rwr <-randomwalkrestart(walkMatrix, c('gene1', 'gene2'), c(), TRUE)
+#  rankedGenes <-randomwalkrestart(walkMatrix, c('gene1', 'gene2'), c())
+#  pValues <- RandomWalkRestart(walkMatrix ,c('gene1'), c(), TRUE, 12, 0.7, 0.6, “tau”=(1,0.5,1.5), “phi”=(1,0.5,1.5))
 
