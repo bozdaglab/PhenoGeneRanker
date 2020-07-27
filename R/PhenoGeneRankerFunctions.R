@@ -596,9 +596,9 @@ rankGenes <- function(Number_Genes, Number_Layers, Results, Seeds) {
   genes_rank_sort_NoSeeds <- 
     genes_rank_sort[which(!genes_rank_sort$Gene %in% Seeds), ]
   
-  genes_rank_sort_NoSeeds$Rank <- seq(1, nrow(genes_rank_sort_NoSeeds))
+  
   genes_rank_sort_NoSeeds <- 
-    genes_rank_sort_NoSeeds[, c("Rank", "Gene", "Score")]
+    genes_rank_sort_NoSeeds[, c("Gene", "Score")]
   
   return(genes_rank_sort_NoSeeds)
 }
@@ -783,7 +783,7 @@ RandomWalkRestart <- function(walk_Matrix, geneSeeds, phenoSeeds,
     dfRank <- CalculatePvalues(RWGeneRankDF, Rand_Seed_Gene_Rank, numCores)
     
 
-    # returns cropped version will have col are gene, score, p value 100 columns
+    # returns cropped version will have col are gene, score, p value
     dfRankCropped <- dfRank[, c(1:2, (ncol(dfRank) - 2))]
     return(dfRankCropped)
   } else {
@@ -1075,7 +1075,7 @@ CalculatePvalues <- function(RWGeneRanks, Rand_Seed_Gene_Rank, no.cores) {
   # calculate P values by comparing (random seed rank + offset value) vs (actual
   # seed rank)
   for (i in 1:length(rank.offset)) {
-    dfRanks[paste0("P",rank.offset[i])] <- base::rowMeans(dfRanks[, 3:(S+2)] < 
+    dfRanks["P_value"] <- base::rowMeans(dfRanks[, 3:(S+2)] < 
                                                 (dfRanks[,S+2+i]), na.rm = TRUE) 
   }
   
