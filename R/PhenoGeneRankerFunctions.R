@@ -1005,7 +1005,7 @@ GenerateRandomSeeds <- function(Seeds, ConnectivityDF, S = 1000, no.groups = 10,
   RandomSeeds
 }
 
-GenerateRandomSeedVector <- function(WM, geneSeeds, phenoSeeds, S = 10, 
+GenerateRandomSeedVector <- function(WM, geneSeeds, phenoSeeds, S = 1000, 
                                      no.groups.gene = 10, 
                                      no.groups.pheno = 5) {
   
