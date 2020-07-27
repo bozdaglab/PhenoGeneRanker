@@ -983,7 +983,7 @@ GenerateRandomSeeds <- function(Seeds, ConnectivityDF, S = 1000, no.groups = 10,
 
   # Stratified Sample 'sample_size' nodes from each group as Random Seeds
   ConnectivityDF <- ConnectivityDF[which(!ConnectivityDF$Node %in% Seeds), ] 
-  ConnectivityDF <- dplyr::group_by(ConnectivityDF, "Group")
+  ConnectivityDF <- dplyr::group_by(ConnectivityDF, ConnectivityDF$Group)
   RandomSeeds <-  dplyr::sample_n(ConnectivityDF, sample_size, 
                                   replace = replace_bool)
   
@@ -1092,7 +1092,7 @@ RandomWalkRestartBatch <- function(Walk_Matrix, geneSeedsList, phenoSeedsList,
   registerDoParallel(cl)
   seedsLength <- ifelse(length(geneSeedsList) != 0, length(geneSeedsList), 
                         length(phenoSeedsList))
-  funcs <- c("GetSeedScores", "RandomWalkRestartSingle", "rank_genes", 
+  funcs <- c("GetSeedScores", "RandomWalkRestartSingle", "rankGenes", 
              "GeometricMean")
   
   Rand_Seed_Gene_Rank <- foreach(i = 1:seedsLength, .combine = cbind, .export =
