@@ -1,17 +1,10 @@
 ReadSettings <- function(input.file){
-  
-  #Layers <- vector("list")
-  #Layers[["type"]] <- c("ppi", "pwy", "expr","pheno")
-  #Layers[["color"]] <- c("blue", "green", "red","darkorchid")
-  #Layers[["count"]] <- c(rep(0, length(Layers[["type"]])))
-  
+
   files <-  read.table(input.file, header=TRUE,sep="\t", 
                        stringsAsFactors = FALSE)
  
   LG <- sum(files$type=="gene")
   LP <- sum(files$type=="phenotype")
-  #Parameters <- check.parameters(Parameters_File, LG, LP)
-  
   output=list(
     FilesDF=files,
     LG=LG,
@@ -117,8 +110,6 @@ CheckSeeds <- function(Seeds, All_genes,All_Phenotypes){
   
   list_Seeds_Ok <- list(Genes_Seeds_Ok,Phenotype_Seeds_Ok)
   
-  # print("Seeds OK: ")
-  # print(paste(All_seeds_ok, sep=" "))
   print("Seeds below do not exist in the network: ")
   print(paste(All_seeds_ko, sep=" "))
   
@@ -171,25 +162,10 @@ GetSeedScores <- function(geneSeeds, phenoSeeds, eta, LG, LP, tau, phi) {
                             stringsAsFactors = FALSE)
   return(Seeds_Score)
 }
-CategorizeRankedGenes <- function(CandidateGenes, Final_Rank_Genes, 
-                                  generate.p_values = TRUE) {
-  if (generate.p_values) {
-    Final_Rank_Genes$Rank <- as.numeric(rownames(Final_Rank_Genes))
-  }
-  Final_Rank_Genes$Type <- "_"
-  Final_Rank_Genes$Type[Final_Rank_Genes$Gene %in% CandidateGenes] <- "C"
-  # reorder so that 3rd column will be Type Final_Rank_Genes <-
-  # Final_Rank_Genes[,c(1, 2, 4, 3 )]
-  Final_Rank_Genes <- Final_Rank_Genes[, c(1, (ncol(Final_Rank_Genes) - 1), 
-                                           ncol(Final_Rank_Genes), 
-                                           2:(ncol(Final_Rank_Genes) - 2))]
-  Final_Rank_Genes
-}
+
 CreateSupraadjacencyMatrix <- function(WholeNet, type, N, L, zeta, 
                                        is.weighted.graph) {
-  # WholeNet <- FullNet type='gene' L <- LG zeta <- Parameters$zeta
-  # is.weighted.graph <- TRUE
-  
+
   Graphs <- WholeNet[which(lapply(WholeNet, `[[`, "type") == type)]
   Graphs <- lapply(Graphs, `[[`, "graph")
   
@@ -198,7 +174,7 @@ CreateSupraadjacencyMatrix <- function(WholeNet, type, N, L, zeta,
   Col_Node_Names <- character()
   Row_Node_Names <- character()
   
-  t1 <- Sys.time()
+
   if (getDoParWorkers() > 1) 
     registerDoSEQ()
   cl <- makeCluster(L + 1)
@@ -206,6 +182,7 @@ CreateSupraadjacencyMatrix <- function(WholeNet, type, N, L, zeta,
   SupraAdjacencyResult <- foreach(i = 1:L, .packages = c("igraph",
                                                          "Matrix")) %dopar% 
     {
+      globalVariables("i")
       
       SupraAdjacencyMatrixPart <- Matrix(0, ncol = N * L, 
                                          nrow = N, sparse = TRUE)
@@ -217,9 +194,9 @@ CreateSupraadjacencyMatrix <- function(WholeNet, type, N, L, zeta,
         Adjacency_Layer <- as_adjacency_matrix(Graphs[[i]], sparse = TRUE)
       }
       
-## We order the matrix by the node name. This way all the matrix will have the
-## same. Additionally we include a label with the layer number for
-##each node name.
+      ## We order the matrix by the node name. This way all the matrix will have the
+      ## same. Additionally we include a label with the layer number for
+      ##each node name.
       Adjacency_Layer <- Adjacency_Layer[order(rownames(Adjacency_Layer)), 
                                          order(colnames(Adjacency_Layer))]
       Layer_Row_Col_Names <- paste(colnames(Adjacency_Layer), i, sep = "_")
@@ -253,10 +230,7 @@ CreateSupraadjacencyMatrix <- function(WholeNet, type, N, L, zeta,
     }
   
   stopCluster(cl)
-  # cat(type, ' SupraAdjacency Time for parallel part: ', format(Sys.time()-t1),
-  # '\n')
-  t2 <- Sys.time()
-  # SupraAdjacencyMatrix <- Matrix(0,ncol=N*L,nrow=N*L,sparse = TRUE)
+
   SupraAdjacencyResult <- unlist(SupraAdjacencyResult, recursive = FALSE)
   
   
@@ -267,10 +241,6 @@ CreateSupraadjacencyMatrix <- function(WholeNet, type, N, L, zeta,
   SupraAdjacencyMatrix <- do.call("rbind", SupraAdjacencyResult[seq(1, 2 * L,
                                                                     by = 2)])
   
-  # SupraAdjacencyMatrix <-
-  # rbind.fill.matrix(SupraAdjacencyResult[seq(1,2*L,by=2)])
-  
-  # cat('SupraAdjacency Time for rest: ', format(Sys.time()-t2), '\n')
   rownames(SupraAdjacencyMatrix) <- Col_Names
   colnames(SupraAdjacencyMatrix) <- Col_Names
   
@@ -278,7 +248,6 @@ CreateSupraadjacencyMatrix <- function(WholeNet, type, N, L, zeta,
 }
 CreateBipartiteMatrix <- function(WholeNet, N, M, gene_pool_nodes_sorted, 
                                   phenotype_pool_nodes_sorted, numCores) {
-  # WholeNet <- FullNet
   Gene_Phenoivar_Network <- WholeNet[which(lapply(WholeNet, `[[`, "type") == 
                                              "bipartite")]
   Gene_Phenoivar_Network <- lapply(Gene_Phenoivar_Network, `[[`, "DF")[[1]]
@@ -295,14 +264,10 @@ CreateBipartiteMatrix <- function(WholeNet, N, M, gene_pool_nodes_sorted,
   
   el <- as_edgelist(Gene_Phenoivar_Network)
   value <- edge_attr(Gene_Phenoivar_Network, name = "weight")
-  # if (!isWeighted){ value <- rep(1, nrow(el)) }
-  
+
   Bipartite_matrix <- Matrix(data = 0, nrow = N, ncol = M)
   rownames(Bipartite_matrix) <- gene_pool_nodes_sorted
   colnames(Bipartite_matrix) <- phenotype_pool_nodes_sorted
-  #rindx <- unlist(mclapply(el[,1], function(x) which(rownames(Bipartite_matrix)
-  # %in% x), mc.cores=10)) cindx <- unlist(mclapply(el[,2], function(x)
-  # which(colnames(Bipartite_matrix) %in% x), mc.cores=10))
   rindx <- unlist(lapply(el[, 1], function(x) 
                       which(rownames(Bipartite_matrix) %in% x)))
   cindx <- unlist(lapply(el[, 2], function(x) 
@@ -635,9 +600,6 @@ rankGenes <- function(Number_Genes, Number_Layers, Results, Seeds) {
   genes_rank_sort_NoSeeds <- 
     genes_rank_sort_NoSeeds[, c("Rank", "Gene", "Score")]
   
-  # genes_rank_sort_NoSeeds <- 
-  #   genes_rank_sort_NoSeeds[, c("Gene", "Score")]
-  # 
   return(genes_rank_sort_NoSeeds)
 }
 RankPhenotypes <- function(Number_Genes, Num_Gene_Layers, Number_Phenotypes, 
@@ -820,9 +782,7 @@ RandomWalkRestart <- function(walk_Matrix, geneSeeds, phenoSeeds,
     # calculate p-values using random ranks
     dfRank <- CalculatePvalues(RWGeneRankDF, Rand_Seed_Gene_Rank, numCores)
     
-    # categoraiz ethe results for candidate genes dfRank <-
-    # CategorizeRankedGenes(CandidateGenes, dfRank)
-    
+
     # returns cropped version will have col are gene, score, p value 100 columns
     dfRankCropped <- dfRank[, c(1:2, (ncol(dfRank) - 2))]
     return(dfRankCropped)
@@ -929,126 +889,65 @@ GetConnectivity <- function(NetworkDF, gene_pool_nodes_sorted,
 #' }
 CreateWalkMatrix <- function(inputFileName, numCores = 1, delta = 0.5, 
                              zeta = 0.5, lambda = 0.5) {
-  network_range <<- c(0.001, 1)
-  global_t1 <- Sys.time()
-  # t1 <- Sys.time()
+  
   Settings <- ReadSettings(inputFileName)
   Parameters <- AddParameters(delta, zeta, lambda)
   FilesDF <- Settings$FilesDF
   LG <- Settings$LG
   LP <- Settings$LP
   
-  # cat('Creating Walk Matrix For: ',
-  # paste0(FilesDF$layer_name[FilesDF$type%in%c('gene', 'pheno', 'bipartite')],
-  # collapse = ','), '\n')
   FullNet <- ReadNetworkLayers(FilesDF)
-  # Layers <- FullNet$Layers
+
   gene_pool_nodes_sorted <- FullNet$gene_pool_nodes_sorted
   phenotype_pool_nodes_sorted <- FullNet$phenotype_pool_nodes_sorted
   FullNet <- FullNet$NetworkLayers
   
   N <- length(gene_pool_nodes_sorted)
   M <- length(phenotype_pool_nodes_sorted)
-  # cat('Time to Initialize : ', format(Sys.time()-t1), '\n')
-  
-  
-  # CREATE SUPRAADJACENCYMATRIX FOR GENES t1 <- Sys.time() print(N) print(LG)
+
   SupraAdjacencyMatrix <- CreateSupraadjacencyMatrix(FullNet, "gene", N, LG, 
                                                        Parameters$zeta, TRUE)
 
-  # '\n')
-  
-  
-  # CREATE SUPRAADJACENCYMATRIX FOR CULTIVARS t1 <- Sys.time()
   SupraAdjacencyMatrixPheno <- CreateSupraadjacencyMatrix(FullNet, "phenotype", 
                                                           M, LP, 
                                                           Parameters$delta,
                                                           TRUE)
-  # cat('Time to create SupraAdjacencyMatrix for Phenoivars : ',
-  # format(Sys.time()-t1), '\n')
-  
-  # CREATE THE BIPARTITE GRAPH t1 <- Sys.time()
   BipartiteMatrix <- CreateBipartiteMatrix(FullNet, N, M, 
                                           gene_pool_nodes_sorted, 
                                           phenotype_pool_nodes_sorted, numCores)
-  # cat('Time to create BipartiteMatrix : ', format(Sys.time()-t1), '\n')
-  
-  
-  # CREATE SUPRABIPARTITEGRAPH
   
   ## We expand the biparite graph to fit the multiplex dimensions.  The biparti
   ## matrix has now NL x MK The genes in all the layers have to point to the
   ## phenotypes in all layers
   
-  # t1 <- Sys.time()
   SupraBipartiteMatrix <- CreateSuprabipartiteMatrix(BipartiteMatrix, N, M, LG, 
                                                        LP)
-  # cat('Time to create SupraBipartiteMatrix : ', format(Sys.time()-t1), '\n')
-  
-  
-  # t1 <- Sys.time() Transition_Gene_Phenoivar <-
-  # CreateTransitionMatrix.gene_pheno(SupraBipartiteMatrix, N, M, LG, LP,
   # Parameters$lambda)
   Transition_Gene_Phenoivar <- CreateTransitionMatrix(SupraBipartiteMatrix, N, 
                                                       M, LG, LP, 
                                                       Parameters$lambda, FALSE)
-  # cat('Time to create Transition Matrix for Genes-Phenoivars : ',
-  # format(Sys.time()-t1), '\n')
-  
-  # t1 <- Sys.time() Transition_Phenoivar_Gene <-
-  # CreateTransitionMatrix.pheno_gene(SupraBipartiteMatrix, N, M, LG, LP,
-  # Parameters$lambda)
   Transition_Phenoivar_Gene <- CreateTransitionMatrix(SupraBipartiteMatrix, N, 
                                                       M, LG, LP, 
                                                       Parameters$lambda, TRUE)
-  # cat('Time to create Transition Matrix for Phenoivars-Genes : ',
-  # format(Sys.time()-t1), '\n')
-  
-  
-  # t1 <- Sys.time()
   Gene_Transition_Multiplex_Network <- CreateGeneTransitionMultiplexNetwork(
                                                           SupraAdjacencyMatrix, 
                                                           SupraBipartiteMatrix, 
                                                           N, LG, 
                                                           Parameters$lambda, 
                                                           numCores)
-  # Gene_Transition_Multiplex_Network <-
-  # CreateTransitionMultiplexNetwork(SupraAdjacencyMatrix, SupraBipartiteMatrix,
-  # N, LG, Parameters$lambda, numCores) cat('Time to create Gene Transition
-  # Multiplex Network : ', format(Sys.time()-t1), '\n')
-  
-  # printSpMatrix2(Gene_Transition_Multiplex_Network, col.names = TRUE)
-  
-  
+
   # CREATE TRANSITION MULTIPLEX NETWORK FOR CULTIVARS t1 <- Sys.time()
   Pheno_Transition_Multiplex_Network <- CreatePhenoTransitionMultiplexNetwork(
                                                       SupraAdjacencyMatrixPheno, 
                                                       SupraBipartiteMatrix, M, 
                                                       LP, Parameters$lambda, 
                                                       numCores)
-  # Pheno_Transition_Multiplex_Network <-
-  # CreateTransitionMultiplexNetwork(SupraAdjacencyMatrixPheno,
-  # SupraBipartiteMatrix, M, LP, Parameters$lambda, numCores) cat('Time to create
-  # Pheno Transition Multiplex Network : ', format(Sys.time()-t1), '\n')
-  
-  
-  # printSpMatrix2(round(Pheno_Transition_Multiplex_Network, 3), col.names = TRUE)
-  # colSums(Pheno_Transition_Multiplex_Network)
-  
-  # CREATE FINAL TRANSITION MULTIPLEX HETERO MATRIX
-  
-  # t1 <- Sys.time()
-  
-  ### We generate the global transiction matrix and we return it.
-  Multiplex_Heterogeneous_Matrix <- rbind(cbind(
+
+    Multiplex_Heterogeneous_Matrix <- rbind(cbind(
                                             Gene_Transition_Multiplex_Network, 
                                             Transition_Gene_Phenoivar), 
                                             cbind(Transition_Phenoivar_Gene, 
                                             Pheno_Transition_Multiplex_Network))
-  
-  # cat('Time to create Final Multiplex Heterogeneous Network : ',
-  # format(Sys.time()-t1), '\n')
-  
   
   # Extract candidate genes for further Random Walks on this WM
   GenePhenoDF <- lapply(FullNet[which(lapply(FullNet, `[[`, "type") == 
@@ -1081,11 +980,10 @@ GenerateRandomSeeds <- function(Seeds, ConnectivityDF, S = 1000, no.groups = 10,
   seed.set.size <- length(Seeds)
   sample_size <- ceiling((S/no.groups) * seed.set.size)
   set.seed(1)
-  #library(dplyr)
-  
+
   # Stratified Sample 'sample_size' nodes from each group as Random Seeds
   ConnectivityDF <- ConnectivityDF[which(!ConnectivityDF$Node %in% Seeds), ] 
-  ConnectivityDF <- dplyr::group_by(ConnectivityDF, Group)
+  ConnectivityDF <- dplyr::group_by(ConnectivityDF, "Group")
   RandomSeeds <-  dplyr::sample_n(ConnectivityDF, sample_size, 
                                   replace = replace_bool)
   
@@ -1117,24 +1015,13 @@ GenerateRandomSeedVector <- function(WM, geneSeeds, phenoSeeds, S = 10,
                                                      no.groups = no.groups.gene)
   PhenoConnectivity<-AssignGroupToConnectivityDF(WM[["phenotype_connectivity"]], 
                                                     no.groups = no.groups.pheno)
-  
-  
-#sink(paste0(output_dir, '/WM_', WM_ID, '_Connectivity.txt'), append=FALSE)
-#print('Summary of Degree Connectivity of Genes by Group:')
-#print(GeneConnectivity %>%group_by(Group) %>% summarise(n=n(), min=min(Degree),
-#max=max(Degree), mean = mean(Degree))) print('------') print('Summary of Degree
-#Connectivity of Phenoivars by Group:') print(PhenoConnectivity %>%
-#group_by(Group) %>% summarise(n=n(), min=min(Degree), max=max(Degree), mean =
-#mean(Degree))) sink()
-  
-  # RandomSeeds <- list()
+
   RandomgeneSeeds <- list()
   if (length(geneSeeds) != 0) {
     RandomgeneSeeds <- GenerateRandomSeeds(geneSeeds, GeneConnectivity, S, 
                                              no.groups.gene, TRUE)
     if (length(geneSeeds) != 1 && any(duplicated(RandomgeneSeeds[1:S]))) 
       warning("WARN: Duplicated random 'gene' seeds generated!")
-    # RandomSeeds <- RandomgeneSeeds
   }
   
   RandomphenoSeeds <- list()
@@ -1143,12 +1030,7 @@ GenerateRandomSeedVector <- function(WM, geneSeeds, phenoSeeds, S = 10,
                                               S, no.groups.pheno, TRUE)
     if (length(phenoSeeds) != 1 && any(duplicated(RandomphenoSeeds[1:S]))) 
       warning("WARN: Duplicated random 'phenotype' seeds generated!")
-    # RandomSeeds <- RandomgeneSeeds
   }
-  
-  # if(length(geneSeeds)!=0 & length(phenoSeeds)!=0){ RandomSeeds <- mapply(c,
-  # RandomgeneSeeds, RandomphenoSeeds, SIMPLIFY=FALSE) }else
-  # if(length(RandomSeeds)==0) stop('No seeds provided!')
   
   return(list(gene = RandomgeneSeeds, phenotype = RandomphenoSeeds))
   
@@ -1206,7 +1088,6 @@ CalculatePvalues <- function(RWGeneRanks, Rand_Seed_Gene_Rank, no.cores) {
 
 RandomWalkRestartBatch <- function(Walk_Matrix, geneSeedsList, phenoSeedsList, 
                                     N, LG, LP, eta, tau, phi, r, no.cores = 4) {
-  # t <- Sys.time()
   cl <- makeCluster(no.cores)
   registerDoParallel(cl)
   seedsLength <- ifelse(length(geneSeedsList) != 0, length(geneSeedsList), 
@@ -1216,8 +1097,8 @@ RandomWalkRestartBatch <- function(Walk_Matrix, geneSeedsList, phenoSeedsList,
   
   Rand_Seed_Gene_Rank <- foreach(i = 1:seedsLength, .combine = cbind, .export =
                                    funcs, .packages = c("Matrix")) %dopar% {
-# Rand_Seed_Gene_Rank <- foreach
-# (i=1:seedsLength,.combine=cbind,.packages=c('Matrix')) %dopar% {
+      globalVariables("i")
+
       if (length(geneSeedsList) != 0 && length(phenoSeedsList) != 0) {
           Seeds_Score <- GetSeedScores(geneSeedsList[[i]], phenoSeedsList[[i]], 
                                                         eta, LG, LP, tau, phi)
@@ -1236,7 +1117,6 @@ RandomWalkRestartBatch <- function(Walk_Matrix, geneSeedsList, phenoSeedsList,
       return(Rand_Seed_Gene_Rank)
     }
   stopCluster(cl)
-  # cat('Time to Random Walk Batch : ', format(Sys.time()-t), '\n')
-  
+
   return(Rand_Seed_Gene_Rank)
 }
