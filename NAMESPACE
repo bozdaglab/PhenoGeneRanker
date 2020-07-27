@@ -5,7 +5,6 @@ import('Matrix', 'foreach', 'doParallel')
 importFrom('igraph', 'V', 'add_vertices', 'as_adjacency_matrix', 
            'graph.data.frame', 'as_edgelist', 'edge_attr')
 importFrom('dplyr', '%>%', 'group_by', 'sample_n', 'bind_cols')
-importFrom('dplyr', '%>%', 'group_by', 'sample_n', 'bind_cols')
 importFrom("stats", "median")
 importFrom("utils", "read.csv", "read.table")
 importFrom('parallel', 'makeCluster', 'stopCluster')
