@@ -179,7 +179,8 @@ CreateSupraadjacencyMatrix <- function(WholeNet, type, N, L, zeta,
     registerDoSEQ()
   cl <- makeCluster(L + 1)
   registerDoParallel(cl)
-  globalVariables("i")
+  #globalVariables("i")
+  i <- 1
   SupraAdjacencyResult <- foreach(i = 1:L, .packages = c("igraph",
                                                          "Matrix")) %dopar% 
     {
@@ -1090,8 +1091,8 @@ RandomWalkRestartBatch <- function(Walk_Matrix, geneSeedsList, phenoSeedsList,
                         length(phenoSeedsList))
   funcs <- c("GetSeedScores", "RandomWalkRestartSingle", "rankGenes", 
              "GeometricMean")
-  globalVariables("i")
-  
+  #globalVariables("i")
+  i <- 1
   Rand_Seed_Gene_Rank <- foreach(i = 1:seedsLength, .combine = cbind, .export =
                                    funcs, .packages = c("Matrix")) %dopar% {
       
