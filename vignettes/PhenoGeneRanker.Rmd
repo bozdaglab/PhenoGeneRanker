@@ -30,7 +30,24 @@ library(PhenoGeneRankerPackage)
   
 ## <a id = "Introduction"></a> Introduction
 
-PhenoGeneRanker is a gene and phenotype prioritization tool that utilizes a heterogeneous gene-phenotype network. PhenoGeneRanker allows multi-layer gene and disease networks. It also calculates empirical p-values of gene ranking using random stratified sampling of genes based on their connectivity degree in the network.
+PhenoGeneRanker is a gene and phenotype prioritization tool that utilizes a heterogeneous gene-phenotype network. PhenoGeneRanker allows multi-layer gene and disease networks. It also calculates empirical p-values of gene ranking using random stratified sampling of genes/phenotypes based on their connectivity degree in the network. It is based on the work from the following article:
+
+@inproceedings{10.1145/3307339.3342155,
+author = {Dursun, Cagatay and Shimoyama, Naoki and Shimoyama, Mary and Schl\"{a}ppi, Michael and Bozdag, Serdar},
+title = {PhenoGeneRanker: A Tool for Gene Prioritization Using Complete Multiplex Heterogeneous Networks},
+year = {2019},
+isbn = {9781450366663},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3307339.3342155},
+doi = {10.1145/3307339.3342155},
+booktitle = {Proceedings of the 10th ACM International Conference on Bioinformatics, Computational Biology and Health Informatics},
+pages = {279–288},
+numpages = {10},
+keywords = {cold tolerance, multiplex heterogenous networks, gene prioritization, gwas, random walk with restart, network propagation, genotype to phenotype mapping, multi-omics data integration, rice},
+location = {Niagara Falls, NY, USA},
+series = {BCB ’19}
+}
 
 # Load PhenoGeneRanker
 
@@ -43,7 +60,7 @@ library(PhenoGeneRankerPackage)
 ## <a id = "Using-the-Methods"></a> Using the Methods
 
 * CreateWalkMatrix
-* randomwalkrestart
+* RandomWalkRestart
 
 
 ## <a id = "Input-File-Formatting"></a> Input File Formatting
