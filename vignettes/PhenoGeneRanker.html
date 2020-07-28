@@ -319,7 +319,6 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </li>
 </ul></li>
 <li><a href="#Example-Workflow">Example Workflow</a></li>
-<li><a href="#Summary">Summary</a></li>
 <li><a href="#Acknowledgements">Acknowledgements</a></li>
 </ul>
 <div id="introduction" class="section level2">
@@ -370,7 +369,7 @@ gene2    pheno2    1
 <div id="createwalkmatrix" class="section level2">
 <h2><a id="CreateWalkMatrix"></a> CreateWalkMatrix</h2>
 <p>This method generates a walk matrix from gene and phenotype data. It takes in an <em>input-file name</em> as a parameter. It has to be a ‘.txt’ file. Instructions on how to format the input file and the necessary data files can be found in the <a href="#Input-File-Formatting">input file formatting</a> section above.</p>
-<p>The rest of the parameters are useful if you would like to alter your resulting matrix. The parameter <em>numCores</em> is the number of cores used for parallel processing, it defaults to a value of 1. It is recommended to use detectCores() for this parameter. The parameter <em>delta</em> is the probability of jumping between gene layers. It has a range of 0 to 1 and a default value of 0.5. The parameter <em>zeta</em> is the probability of jumping between gene layers. It has a range of 0 to 1 and a default value of 0.5. The parameter <em>lambda</em> is the inter-network jump probability. It has a range of 0 to 1 and a default value of 0.5.</p>
+<p>The rest of the parameters are useful if you would like to alter your resulting matrix. The parameter <em>numCores</em> is the number of cores used for parallel processing, it defaults to a value of 1. It is recommended to use detectCores() for this parameter. The parameter <em>delta</em> is the probability of jumping between gene layers. It has a range of 0 to 1 and a default value of 0.5. The parameter <em>zeta</em> is the probability of jumping between phenotype layers. It has a range of 0 to 1 and a default value of 0.5. The parameter <em>lambda</em> is the inter-network jump probability. It has a range of 0 to 1 and a default value of 0.5.</p>
 <p>The returned list is what will be used in the randomwalkrestart() method.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">walkMatrix &lt;-<span class="kw">CreateWalkMatrix</span>(<span class="st">&#39;file.txt&#39;</span>)</a>
 <a class="sourceLine" id="cb7-2" title="2"><span class="kw">CreateWalkMatrix</span>(<span class="st">&#39;file.txt&#39;</span>, <span class="kw">detectCores</span>(), <span class="fl">0.4</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>)</a></code></pre></div>
@@ -415,13 +414,8 @@ gene33  5.779120e-04
 <a class="sourceLine" id="cb12-2" title="2">rankedGenes &lt;-<span class="kw">randomwalkrestart</span>(walkMatrix, <span class="kw">c</span>(<span class="st">&#39;gene1&#39;</span>, <span class="st">&#39;gene2&#39;</span>), <span class="kw">c</span>())</a>
 <a class="sourceLine" id="cb12-3" title="3">pValues &lt;-<span class="st"> </span><span class="kw">RandomWalkRestart</span>(walkMatrix ,<span class="kw">c</span>(<span class="st">&#39;gene1&#39;</span>), <span class="kw">c</span>(), <span class="ot">TRUE</span>, <span class="dv">12</span>, <span class="fl">0.7</span>, <span class="fl">0.6</span>, “tau”=(<span class="dv">1</span>,<span class="fl">0.5</span>,<span class="fl">1.5</span>), “phi”=(<span class="dv">1</span>,<span class="fl">0.5</span>,<span class="fl">1.5</span>))</a></code></pre></div>
 </div>
-<div id="summary" class="section level2">
-<h2><a id="Summary"></a> Summary</h2>
-<p>This package was originally created for a gene prioritization project. It was performed with datasets from rice genes. You can read the paper about this project here. <a href>PhenoGeneRankerPaper</a></p>
-</div>
 <div id="acknowledgements" class="section level2">
 <h2><a id="Acknowledgements"></a> Acknowledgements</h2>
-<p>package specific</p>
 </div>
 </div>
 
