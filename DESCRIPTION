@@ -1,4 +1,4 @@
-Package: PhenoGeneRankerPackage
+Package: PhenoGeneRanker
 Type: Package
 Title: PhenoGeneRanker: A gene and phenotype prioritization tool
 Version: 0.99.0

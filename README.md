@@ -1,2 +1,2 @@
-# PhenoGeneRankerPackage
+# PhenoGeneRanker
 Bioconductor package for PhenoGeneRanker
