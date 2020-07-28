@@ -28,7 +28,7 @@
 \alias{order}
 \alias{your}
 \alias{file.}
-\alias{They}
+\alias{The}
 \alias{must}
 \alias{sum}
 \alias{up}
@@ -52,7 +52,7 @@
 \alias{phi}
 \alias{'phenotype'}
 \alias{phenotype}
-\title{Random Walk Restarts}
+\title{Random Walk Restart}
 \usage{
 RandomWalkRestart(
   walk_Matrix,
@@ -94,17 +94,16 @@ probability.}
 If the parameter generatePValue is TRUE, then this method returns a
   data frame with the top 100 ranked p-values. There are three columns for
   the gene name, score, p-value. If generatePValue is FALSE, then it creates
-  a data frame of all of the genes ranked. It has a column of the rank, gene
-  name, and steady state scores for each gene or phenotype.
+  a data frame of all of the genes ranked. It has a column for the gene
+  names, and steady state scores for each gene or phenotype.
 }
 \description{
-This method runs the random walk with restarts on the provided
-  walkmatrix transition matrix of multiplex heterogeneous networks. When
-  random walk converges to steady state then the random walk stops. It
-  returns a dataframe including gene and phenotype names, ranks and steady
-  state scores of the genes and phenotypes. If generatePvalue is TRUE then it
-  generates p-values along with the ranks with respect to offset value of
-  100.
+This method runs the random walk with restart on the provided
+  walk matrix. When random walk converges to steady-state then the random
+  walk stops. It returns a data frame including ranked genes and phenotypes,
+  and steady-state scores of the genes and phenotypes. If generatePvalue is
+  TRUE then it generates p-values along with the ranks with respect to offset
+  value of 100.
 }
 \examples{
 \dontrun{
