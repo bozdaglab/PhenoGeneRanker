@@ -21,7 +21,7 @@ library(PhenoGeneRankerPackage)
 ```
 # Table of Contents
   - [Introduction](#Introduction)
-  - [Using the Methods](#Using-the-Methods)  
+  - [Using the Functions](#Using-the-Functions)  
     - [Input File Formatting](#Input-File-Formatting)  
     - [CreateWalkMatrix](#CreateWalkMatrix)  
     - [RandomWalkRestart](#randomwalkrestart)  
@@ -30,43 +30,29 @@ library(PhenoGeneRankerPackage)
   
 ## <a id = "Introduction"></a> Introduction
 
-PhenoGeneRanker is a gene and phenotype prioritization tool that utilizes a heterogeneous gene-phenotype network. PhenoGeneRanker allows multi-layer gene and disease networks. It also calculates empirical p-values of gene ranking using random stratified sampling of genes/phenotypes based on their connectivity degree in the network. It is based on the work from the following article:
+PhenoGeneRanker is a gene and phenotype prioritization tool that utilizes random walk with restart (RWR) on a multiplex heterogeneous gene-phenotype network. PhenoGeneRanker allows multi-layer gene and phenotype networks. It also calculates empirical p-values of gene ranking using random stratified sampling of genes/phenotypes based on their connectivity degree in the network. It is based on the work from the following article:
 
-@inproceedings{10.1145/3307339.3342155,
-author = {Dursun, Cagatay and Shimoyama, Naoki and Shimoyama, Mary and Schl\"{a}ppi, Michael and Bozdag, Serdar},
-title = {PhenoGeneRanker: A Tool for Gene Prioritization Using Complete Multiplex Heterogeneous Networks},
-year = {2019},
-isbn = {9781450366663},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3307339.3342155},
-doi = {10.1145/3307339.3342155},
-booktitle = {Proceedings of the 10th ACM International Conference on Bioinformatics, Computational Biology and Health Informatics},
-pages = {279–288},
-numpages = {10},
-keywords = {cold tolerance, multiplex heterogenous networks, gene prioritization, gwas, random walk with restart, network propagation, genotype to phenotype mapping, multi-omics data integration, rice},
-location = {Niagara Falls, NY, USA},
-series = {BCB ’19}
-}
+Cagatay Dursun, Naoki Shimoyama, Mary Shimoyama, Michael Schläppi, and Serdar Bozdag. 2019. PhenoGeneRanker: A Tool for Gene Prioritization Using Complete Multiplex Heterogeneous Networks. In Proceedings of the 10th ACM International Conference on Bioinformatics, Computational Biology and Health Informatics (BCB ’19). Association for Computing Machinery, New York, NY, USA, 279–288. DOI:https://doi.org/10.1145/3307339.3342155
 
-# Load PhenoGeneRanker
+# Install and Load PhenoGeneRanker
 
-Loading the package will make it usable and check to make sure that all of the nessecary packages are also installed. 
+You can install and load the package by running the following commands on an R console: 
 
 ```{r}
-library(PhenoGeneRankerPackage)
+BiocManager::install("PhenoGeneRanker")
+library(PhenoGeneRanker)
 ```
 
-## <a id = "Using-the-Methods"></a> Using the Methods
+## <a id = "Using-the-Functions"></a> Using the Functions
 
 * CreateWalkMatrix
 * RandomWalkRestart
 
 
 ## <a id = "Input-File-Formatting"></a> Input File Formatting
-The CreateWalkMatrix method takes in an _input file_ as a parameter. This file is a ".txt" file with two tab-separated columns which hold the data files you would like to work with. The header row must say “type” and “file_name” for each of the two columns. The type column contains what kind of data is stored in the file. These can be either gene, phenotype, or bipartite file types. The file_name column stores the name of your data file along with the “.txt” extension.   
+The CreateWalkMatrix function takes in an _input file_ as a parameter. This file is a ".txt" file with two tab-separated columns which holds the network files you would like to run PhenoGeneRanker. The header row should be “type” and “file_name”. The type column contains the type of the network file. It can be gene, phenotype, or bipartite. The file_name column stores the name of your network file along with the “.txt” extension. Any number of gene or phenotype files can be used theoretically, but there are practical limits which depend on the capacity of the computer that will run the PhenoGeneRanker.    
 
-This file should look something like this:
+An example _input file_ is shown below:
 ```
 type    file_name  
 gene    geneFile1.txt 
@@ -76,9 +62,9 @@ phenotype    phenotypeFile2.txt
 bipartite    bipartiteFile.txt  
 ```
 
-Inside each of the file_name files, there is a “from”, “to”, and “weight” column. These are all tab-separated. For the gene and phenotype files, the “from” and “to” columns will contain the names of the genes and phenotypes, the row order doesn’t matter. The “weight” column will have the weight of the relationship between the genes and phenotypes. All unweighted networks must have a value of 1 in the weight column. For the bipartite file, the “from” column must contain gene names and the “to” column must have phenotype names. The meaning and usage of the weight column are analogous to the gene and phenotype files.  
+Inside each of the file_name files, there are three tab-separeted columns with header “from”, “to”, and “weight”. For the gene and phenotype networks, the “from” and “to” columns will contain the ids of the genes and phenotypes. The “weight” column stores the weight of the relationship between the nodes. If the network is unweighted then weight column should be 1 for all interactions. For the bipartite file, the “from” column must contain gene ids and the “to” column must have phenotype ids.   
 
-The geneFile1.txt from the previous example could look like this:
+An example gene network is shown below:
 ```
 from     to       weight  
 gene1    gene2    1  
@@ -86,7 +72,7 @@ gene1    gene3    1
 gene2    gene4    1 
 ...      ...      ...
 ```
-The phenotype files could look like this:
+An example phenotype network is shown below::
 ```
 from     to       weight  
 pheno1   pheno2   1  
@@ -94,7 +80,7 @@ pheno1   pheno3   1
 pheno3   pheno5   1  
 ...      ...      ...
 ```
-The bipartite file would look like this:
+An example bipartite network is shown below::
 ```
 from     to        weight  
 gene1    pheno1    1  
@@ -104,62 +90,62 @@ gene2    pheno2    1
 
 ## <a id = "CreateWalkMatrix"></a> CreateWalkMatrix
 
-This method generates a walk matrix from gene and phenotype data. It takes in an *input-file name* as a parameter. It has to be a '.txt' file. Instructions on how to format the input file and the necessary data files can be found in the [input file formatting](#Input-File-Formatting) section above.
+This function generates a walk matrix (transition matrix) using the gene, phenotype and bipartite networks given in the *inputFileName*. It has to be a '.txt' file. Instructions on how to format the input file and the necessary data files can be found in the [input file formatting](#Input-File-Formatting) section above.
 
-The rest of the parameters are useful if you would like to alter your resulting matrix. The parameter *numCores* is the number of cores used for parallel processing, it defaults to a value of 1. It is recommended to use detectCores() for this parameter. The parameter *delta* is the probability of jumping between gene layers. It has a range of 0 to 1 and a default value of 0.5. The parameter *zeta* is the probability of jumping between phenotype layers. It has a range of 0 to 1 and a default value of 0.5. The parameter *lambda* is the inter-network jump probability. It has a range of 0 to 1 and a default value of 0.5.
+Other parameters have default values. The parameter *numCores* is the number of cores used for parallel processing, it defaults to a value of 1. The parameter *delta* is the probability of jumping between gene layers, and its default value is 0.5. The parameter *zeta* is the probability of jumping between phenotype layers, and its default value is 0.5. The parameter *lambda* is the inter-network jump probability, and its default value is 0.5.
 
-The returned list is what will be used in the randomwalkrestart() method.
+It outputs a list variable which is used by RandomWalkRestart() function.
 
 ```{r eval=FALSE}
 walkMatrix <-CreateWalkMatrix('file.txt')
 CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
 ```
 
-This method returns a list containing the walk matrix, a sorted list of gene pool nodes, a sorted list of phenotype pool nodes, the connectivity of the genes, the connectivity of the phenotypes the number of genes, the number of phenotypes, the number of gene pool nodes,  and the number of phenotype pool nodes. You can access each of these elements as shown below. 
+This function returns a list containing the walk matrix, a sorted list of gene ids, a sorted list of phenotype ids, the connectivity degree of the genes, the connectivity degree of the phenotypes, the number of gene layers, the number of phenotype layers, the number of genes and the number of phenotypes. You can access each of these elements as shown below. 
 ```{r eval=FALSE}
 walkMatrix[[“WM”]] # accesses the walk matrix itself
-walkMatrix[[“genes”]] # accesses the sorted gene pool nodes
-walkMatrix[[“phenotypes”]] # accesses the sorted phenotype pool nodes
-walkMatrix[[“gene_connectivity”]] # accesses the degree of all the genes in the network
-walkMatrix[[“phenotype_connectivity”]] # accesses the degree of all the phenotypes in the network
-walkMatrix[[“LG”]] # the number of genes in the network
-walkMatrix[[“LP”]] # the number of phenotypes in the network
-walkMatrix[[“N”]] # the number of gene pool nodes
-walkMatrix[[“M”]] # the number of phenotype pool nodes
+walkMatrix[[“genes”]] # sorted genes in the final network
+walkMatrix[[“phenotypes”]] # sorted phenotypes in the final network
+walkMatrix[[“gene_connectivity”]] # the degree of genes in the final network
+walkMatrix[[“phenotype_connectivity”]] # the degree of phenotypes in the final network
+walkMatrix[[“LG”]] # the number of gene layers
+walkMatrix[[“LP”]] # the number of phenotype layers
+walkMatrix[[“N”]] # the number of genes
+walkMatrix[[“M”]] # the number of phenotypes
 ```
 
 
-## <a id = "randomwalkrestart"></a> RandomWalkRestart
+## <a id = "RandomWalkRestart"></a> RandomWalkRestart
 
-This method runs the random walk with restart on the provided walk matrix. This method uses a parameter called *geneSeeds* and *phenoSeeds*, wich are vectors containing the names of genes and phenotypes that you would like to use in the ranking process. These are vectors that store strings of gene and phenotype names.
+This function runs the random walk with restart by utilizing the output of *CreateWalkMatrix* function and gene/phenotype seeds as inputs, and returns the rank of genes/phenotypes with RWR scores and associated p-values if *generatePvalue* parameter is TRUE. *geneSeeds* and *phenoSeeds* parameters are vector type and stores the ids of genes and phenotypes that RWR starts its walk. *generatePValues* determines the generation of P-values along with the ranks of genes and phenotypes. If the parameter *generatePvalue* is FALSE, the function returns a data frame including sorted genes/phenotypes by rank and the RWR scores of the genes/phenotyeps. If *generatePvalue* is TRUE then it generates p-values along with the ranks with respect to offset rank of 100, please see the {r} [paper] (https://dl.acm.org/doi/10.1145/3307339.3342155) for details.
 
-The method also uses a parameter called *generatePValues* which determines the resulting data frame. If the parameter *generatePvalue* is FALSE, the method returns a data frame including gene names and the steady-state scores of the genes. These are sorted in their rank order. The first index is rank 1 and the rest of the genes' ranks below correspond to their indices. If *generatePvalue* is TRUE then it generates p-values along with the ranks with respect to offset value of 100.
+The parameter *numCores* takes the number of cores for parallel processing. If *generatePvalue* parameter is TRUE then it is strongly recommended to use all available cores in the computer for shorter run time. Emprical p-values are calculated based on *1000* runs for random gene/phenotype seeds in the network.
 
-The parameter *numCores* causes the algorithm to run faster by allowing parallel processing throughout the number of cores available. For the most efficient runtime, it is recommended that the detectCores() method from the parallel package is used for this parameter. 
+In order to control the restart probability of RWR, you can change the *r* parameter value, and it has a default value of 0.7. 
 
-In order to control the global restart probability, you can change the *r* parameter value. It has a range from 0 to 1 and it has a default value of 0.7.
+The parameter *eta* controls restarting of RWR either to a gene seed or phenotype seeds, higher *eta* means utilizing gene seeds more than phenotype seeds, and it has a default value of 0.5.
 
-The individual network restart probability can be controlled by the parameter *eta*. Eta has a range from 0 to 1 and it has a default value of 0.5.
+The parameter *tau* is a vector that stores weights for each of the 'gene' layer. Each value of the vector corresponds to the order of the gene layers in the *inputFileName* parameter of CreateWalkMatrix function. The sum of the weights in the *tau* parameter must sum up to the same number of gene layers. *phi* is a vector that stores weights for each of the 'phenotype' layer and it has the similar functionality of *tau* parameter for phenotypes. Default values of the two parameters give equal weights to all layers.
 
-The last two parameters are optional if you would like to control the amount of weight given to each of the layer files. *tau* is a vector that stores weights for each of the 'gene' input files that were added in CreateWalkMatrix. Each index of the vector corresponds to the order of the files in your input file. They must sum up to the same number of gene files you added. *phi* is a vector that stores weights for each of the 'phenotype'  input files that were added in CreateWalkMatrix. Each index of the vector corresponds to the order of the files in your input file. They must sum up to the same number of phenotype files you added. If you want to have each file equally weighted, you do not need to input these vectors into the method.
+Below you can find different examples for *RandomWalkRestart* function calls:
 
 ```{r eval=FALSE}
-RWR <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(), TRUE)
-RWR <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c('phenotype1', 'phenotype2'), FALSE)
-RWR <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c(), TRUE, 12, 0.7, 0.6, “tau”=(1,0.5,1.5), “phi”=(1,0.5,1.5))
+RWR <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(), TRUE) # utilizes only gene seeds and generates p-values for ranks.
+RWR <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c('phenotype1', 'phenotype2'), FALSE) # utilizes gene and phenotype seeds and does not generate p-values.
+RWR <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c(), TRUE, 12, r=0.8, eta=0.6, tau=(1,0.5,1.5), phi=(1,0.5,1.5)) # utilizes only gene seeds, generates p-values, custom values for parameters r, eta, tau and phi.
 ```
 
-If the generatePvalues parameter is TRUE, the resulting data frame looks like this.
+If the *generatePvalues* parameter is TRUE, the output looks like this:
 ```
-gene    score     P100
+Gene    Score     P_value
 g1      1.9e-3    0.020000000
 g425    1.6e-3    0.030000000
 g77     1.3e-3    0.120000000
 ...     ...       ...
 ```
-If the generatePvalues parameter is FALSE, the resulting data frame looks like this.
+If the generatePvalues parameter is FALSE, the output looks like this:
 ```
-gene    score
+Gene    Score
 gene47  8.877424e-04
 gene202 8.219792e-04
 gene33  5.779120e-04
@@ -170,11 +156,9 @@ gene33  5.779120e-04
 ## <a id = "Example-Workflow"></a> Example Workflow
 
 ```{r eval=FALSE}
-walkMatrix <-CreateWalkMatrix('file.txt')
-rankedGenes <-randomwalkrestart(walkMatrix, c('gene1', 'gene2'), c())
-pValues <- RandomWalkRestart(walkMatrix ,c('gene1'), c(), TRUE, 12, 0.7, 0.6, “tau”=(1,0.5,1.5), “phi”=(1,0.5,1.5))
+walkMatrix <- CreateWalkMatrix('file.txt')
+ranks <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c())
+ranks_with_pvalues <- RandomWalkRestart(walkMatrix ,c('gene1', 'gene2'), c('phenotype1'), generatePValue=TRUE, numCores=12)
 ```
 
-
-## <a id = "Acknowledgements"></a> Acknowledgements
 
