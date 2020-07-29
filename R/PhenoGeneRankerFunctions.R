@@ -661,12 +661,12 @@ GeometricMean <- function(Scores, L, N) {
 #' @param numCores This is the number of cores used for parallel processing.
 #' @param r This parameter controls the global restart probability of RWR, and it has a default value of 0.7.
 #' @param eta This parameter  controls restarting of RWR either to a gene seed or phenotype seeds, 
-#' higher *eta* means utilizing gene seeds more than phenotype seeds, and it has a default value of 0.5.
-#' @aliases tau This is a vector that stores weights for each of the 'gene'
+#' higher eta means utilizing gene seeds more than phenotype seeds, and it has a default value of 0.5.
+#' @param tau This is a vector that stores weights for each of the 'gene'
 #'   layer in the complex gene and phenotype network. Each value of the vector
 #'   corresponds to the order of the network files in the input file of CreateWalkMatrix function. The weights must
 #'   sum up to the same number of gene layers. Default value gives equal weight to gene layers.
-#' @aliases tau This is a vector that stores weights for each of the 'phenotype'
+#' @param phi This is a vector that stores weights for each of the 'phenotype'
 #'   layer in the complex gene and phenotype network. Each value of the vector
 #'   corresponds to the order of the network files in the input file of CreateWalkMatrix function. The weights must
 #'   sum up to the same number of phenotype layers. Default value gives equal weight to phenotype layers.
@@ -677,32 +677,37 @@ GeometricMean <- function(Scores, L, N) {
 #'   of ranked genes/phenotypes with two columns; Gene/Phenotype id, score.
 #'
 #' @examples
-#' \dontrun{
-#' ranks <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(), TRUE)
-#' ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
-#'        c('phenotype1', 'phenotype2'), FALSE)
-#' ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c(), 
-#'        TRUE, 12, 0.7, 0.6, “tau”=(1,0.5,1.5), “phi”=(1,0.5,1.5))
-#' }
+#' print("The data sets we used have not been published so the code below is unable to be run.")
+#' #ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
+#' #ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
+#' #ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
+#'  #      c('phenotype1', 'phenotype2'), FALSE)
+#' #ranksWithPval <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
+#'  #      c(), TRUE, 12, 0.7, 0.6, tau =(1,0.5,1.5), phi =(1,0.5,1.5))
+#' 
 RandomWalkRestart <- function(walkMatrix, geneSeeds, phenoSeeds, 
                                generatePValue = TRUE, numCores = 1,
-                               r = 0.7, eta = 0.5) {
+                               r = 0.7, eta = 0.5, tau = NULL, phi = NULL) {
   
-  if (!exists("tau")) {
+  if (!is.null(tau)) {
     tau <- rep(1, walkMatrix[["LG"]])
+    
+    if (sum(tau)/walkMatrix[["LG"]] != 1) {
+      stop("Incorrect tau, the sum of its values should be equal to the number 
+      of gene layers")
+    }
   }
   
-  if (!exists("phi")) {
+  if (!is.null(phi)) {
     phi <- rep(1, walkMatrix[["LP"]])
+    
+    if (sum(phi)/walkMatrix[["LP"]] != 1) {
+      stop("Incorrect phi, the sum of its values should be equal to the number 
+      of phenotype layers")
+    }
   }
-  if (sum(tau)/walkMatrix[["LG"]] != 1) {
-    stop("Incorrect tau, the sum of its values should be equal to the number of
-         gene layers")
-  }
-  if (sum(phi)/walkMatrix[["LP"]] != 1) {
-    stop("Incorrect phi, the sum of its values should be equal to the number of 
-         phenotype layers")
-  }
+  
+  
   
   gene_pool_nodes_sorted <- walkMatrix[["genes"]]
   phenotype_pool_nodes_sorted <- walkMatrix[["phenotypes"]]
@@ -864,10 +869,11 @@ GetConnectivity <- function(NetworkDF, gene_pool_nodes_sorted,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' CreateWalkMatrix('myInput.txt')
-#' CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
-#' }
+#' print("The data sets we used have not been published so the code below is unable to be run")
+#' #CreateWalkMatrix('myInput.txt')
+#' #CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
+#' 
+#' 
 CreateWalkMatrix <- function(inputFileName, numCores = 1, delta = 0.5, 
                              zeta = 0.5, lambda = 0.5) {
   
@@ -960,7 +966,7 @@ GenerateRandomSeeds <- function(Seeds, ConnectivityDF, S = 1000, no.groups = 10,
                                   replace_bool = FALSE) {
   seed.set.size <- length(Seeds)
   sample_size <- ceiling((S/no.groups) * seed.set.size)
-  set.seed(1)
+  #set.seed(1)
 
   # Stratified Sample 'sample_size' nodes from each group as Random Seeds
   ConnectivityDF <- ConnectivityDF[which(!ConnectivityDF$Node %in% Seeds), ] 

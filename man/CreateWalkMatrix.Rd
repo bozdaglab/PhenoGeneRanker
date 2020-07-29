@@ -17,28 +17,27 @@ CreateWalkMatrix(
 
 \item{numCores}{This is the number of cores used for parallel processing.}
 
-\item{delta}{This is the probability of jumping between gene layers. It has a
-range of 0 to 1. It has a default value of 0.5.}
+\item{delta}{This is the probability of jumping between gene layers. High delta means 
+RWR  is high likely to jump to other layers in gene multiplex netwrok. It has a default value of 0.5.}
 
-\item{zeta}{This is the probability of jumping between phenotype layers. It
-has a range of 0 to 1. It has a default value of 0.5.}
+\item{zeta}{This is the probability of jumping between phenotype layers. High zeta means 
+RWR  is high likely to jump to other layers in phenotype multiplex netwrok. It has a default value of 0.5.}
 
-\item{lambda}{This is the Inter-Network Jump Probability. It has a range of 0
-to 1. It has a default value of 0.5.}
+\item{lambda}{This is the probability of jumpting between gene and phenotype multiplex networks. High lambda
+means RWR is more likely to exploit the bipartite relation. It has a default value of 0.5.}
 }
 \value{
-This returns a list that contains a walk matrix, list of sorted genes
-  by name, list of phenotypes sorted by name, the degree of all genes in the
-  multiplex heterogeneous network, the degree of all phenotypes in the
-  network, the number of gene layer files, the number of phenotype layer
-  files, the number of gene pool nodes, and the number of phenotype nodes.
+This returns a list containing the walk matrix, a sorted list of gene ids, a sorted list of phenotype ids,
+ the connectivity degree of the genes, the connectivity degree of the phenotypes, the number of gene layers, 
+ the number of phenotype layers, the number of genes and the number of phenotypes in the final complex network.
 }
 \description{
-Generates a Walk matrix from Gene and Phenotype data.
+Generates a Walk Matrix (Transition Matrix) from Gene and Phenotype networks for RWR.
 }
 \examples{
-\dontrun{
-CreateWalkMatrix('myInput.txt')
-CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
-}
+print("The data sets we used have not been published so the code below is unable to be run")
+#CreateWalkMatrix('myInput.txt')
+#CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
+
+
 }

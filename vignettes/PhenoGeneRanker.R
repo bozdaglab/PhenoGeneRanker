@@ -7,11 +7,12 @@ knitr::opts_chunk$set(
 ## ----setup--------------------------------------------------------------------
 library(PhenoGeneRanker)
 
-## -----------------------------------------------------------------------------
-BiocManager::install("PhenoGeneRanker")
-library(PhenoGeneRanker)
+## ----eval=FALSE---------------------------------------------------------------
+#  BiocManager::install("PhenoGeneRanker")
+#  library(PhenoGeneRanker)
 
 ## ----eval=FALSE---------------------------------------------------------------
+#  ##The data sets we used have not been published so the code below is unable to be run.
 #  walkMatrix <-CreateWalkMatrix('file.txt')
 #  CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
 
@@ -27,9 +28,10 @@ library(PhenoGeneRanker)
 #  walkMatrix[[“M”]] # the number of phenotypes
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  RWR <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(), TRUE) # utilizes only gene seeds and generates p-values for ranks.
-#  RWR <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c('phenotype1', 'phenotype2'), FALSE) # utilizes gene and phenotype seeds and does not generate p-values.
-#  RWR <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c(), TRUE, 12, r=0.8, eta=0.6, tau=(1,0.5,1.5), phi=(1,0.5,1.5)) # utilizes only gene seeds, generates p-values, custom values for parameters r, eta, tau and phi.
+#  ##The data sets we used have not been published so the code below is unable to be run.
+#  ranks <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(), TRUE) # utilizes only gene seeds and generates p-values for ranks.
+#  ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c('phenotype1', 'phenotype2'), FALSE) # utilizes gene and phenotype seeds and does not generate p-values.
+#  ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c(), TRUE, 12, r=0.8, eta=0.6, tau=(1,0.5,1.5), phi=(1,0.5,1.5)) # utilizes only gene seeds, generates p-values, custom values for parameters r, eta, tau and phi for a complex network with three gene layers and three phenotype layers.
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  walkMatrix <- CreateWalkMatrix('file.txt')

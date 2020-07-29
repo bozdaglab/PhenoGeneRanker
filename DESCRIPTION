@@ -2,15 +2,16 @@ Package: PhenoGeneRanker
 Type: Package
 Title: PhenoGeneRanker: A gene and phenotype prioritization tool
 Version: 0.99.0
-Author: Cagatay Dursun, Serdar Bozdag, Jake Petrie
-Maintainer: Cagatay Dursun <cagataydursun@gmail.com>
+Authors@R: c(person("Cagatay", "Dursun", email="cagataydursun@gmail.com", role=c("aut")), 
+            person("Serdar", "Bozdag", email="serdar.bozdag@marquette.edu", role="aut"),
+           person("Jake", "Petrie", email="jacob.m.petrie@marquette.edu", role = "cre"))
 Description: This package is a gene/phenotype prioritization tool that utilizes 
     multiplex heterogeneous gene phenotype network. PhenoGeneRanker allows multi-layer gene
     and phenotype networks. It also calculates empirical p-values of gene/phenotype ranking
     using random stratified sampling of genes/phenotypes based on their connectivity degree 
     in the network.
 License: Creative Commons Attribution 4.0 International License
-Imports: igraph, Matrix, foreach, doParallel, dplyr
+Imports: igraph, Matrix, foreach, doParallel, dplyr, stats, utils, parallel
 Suggests: knitr, rmarkdown
 Encoding: UTF-8
 VignetteBuilder: knitr
