@@ -52,41 +52,19 @@ library(PhenoGeneRanker)
 ## <a id = "Input-File-Formatting"></a> Input File Formatting
 The CreateWalkMatrix function takes in an _input file_ as a parameter. This file is a ".txt" file with two tab-separated columns which holds the network files you would like to run PhenoGeneRanker. The header row should be “type” and “file_name”. The type column contains the type of the network file. It can be gene, phenotype, or bipartite. The file_name column stores the name of your network file along with the “.txt” extension. Any number of gene or phenotype files can be used theoretically, but there are practical limits which depend on the capacity of the computer that will run the PhenoGeneRanker.    
 
-An example _input file_ is shown below:
-```
-type    file_name  
-gene    geneFile1.txt 
-gene    geneFile2.txt
-phenotype    phenotypeFile1.txt  
-phenotype    phenotypeFile2.txt
-bipartite    bipartiteFile.txt  
-```
+An example _input file_ is shown below:  
+![](InputFileImage.png)
 
 Inside each of the file_name files, there are three tab-separeted columns with header “from”, “to”, and “weight”. For the gene and phenotype networks, the “from” and “to” columns will contain the ids of the genes and phenotypes. The “weight” column stores the weight of the relationship between the nodes. If the network is unweighted then weight column should be 1 for all interactions. For the bipartite file, the “from” column must contain gene ids and the “to” column must have phenotype ids.   
 
-An example gene network is shown below:
-```
-from     to       weight  
-gene1    gene2    1  
-gene1    gene3    1  
-gene2    gene4    1 
-...      ...      ...
-```
-An example phenotype network is shown below::
-```
-from     to       weight  
-pheno1   pheno2   1  
-pheno1   pheno3   1  
-pheno3   pheno5   1  
-...      ...      ...
-```
-An example bipartite network is shown below::
-```
-from     to        weight  
-gene1    pheno1    1  
-gene2    pheno2    1 
-...      ...       ...
-```
+An example gene network is shown below:  
+![](geneNetwork.png)
+
+An example phenotype network is shown below:  
+![](phenotypeNetwork.png)
+
+An example bipartite network is shown below:  
+![](bipartiteNetwork.png)
 
 ## <a id = "CreateWalkMatrix"></a> CreateWalkMatrix
 
@@ -96,23 +74,24 @@ Other parameters have default values. The parameter *numCores* is the number of 
 
 It outputs a list variable which is used by RandomWalkRestart() function.
 
-```{r eval=FALSE}
+```{r}
 ##The data sets we used have not been published so the code below is unable to be run.
-walkMatrix <-CreateWalkMatrix('file.txt')
-CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
+
+#walkMatrix <-CreateWalkMatrix('file.txt')
+#CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
 ```
 
 This function returns a list containing the walk matrix, a sorted list of gene ids, a sorted list of phenotype ids, the connectivity degree of the genes, the connectivity degree of the phenotypes, the number of gene layers, the number of phenotype layers, the number of genes and the number of phenotypes. You can access each of these elements as shown below. 
-```{r eval=FALSE}
-walkMatrix[[“WM”]] # accesses the walk matrix itself
-walkMatrix[[“genes”]] # sorted genes in the final network
-walkMatrix[[“phenotypes”]] # sorted phenotypes in the final network
-walkMatrix[[“gene_connectivity”]] # the degree of genes in the final network
-walkMatrix[[“phenotype_connectivity”]] # the degree of phenotypes in the final network
-walkMatrix[[“LG”]] # the number of gene layers
-walkMatrix[[“LP”]] # the number of phenotype layers
-walkMatrix[[“N”]] # the number of genes
-walkMatrix[[“M”]] # the number of phenotypes
+```{r}
+#walkMatrix[[“WM”]] # accesses the walk matrix itself
+#walkMatrix[[“genes”]] # sorted genes in the final network
+#walkMatrix[[“phenotypes”]] # sorted phenotypes in the final network
+#walkMatrix[[“gene_connectivity”]] # the degree of genes in the final network
+#walkMatrix[[“phenotype_connectivity”]] # the degree of phenotypes in the final network
+#walkMatrix[[“LG”]] # the number of gene layers
+#walkMatrix[[“LP”]] # the number of phenotype layers
+#walkMatrix[[“N”]] # the number of genes
+#walkMatrix[[“M”]] # the number of phenotypes
 ```
 
 
@@ -130,37 +109,28 @@ The parameter *tau* is a vector that stores weights for each of the 'gene' layer
 
 Below you can find different examples for *RandomWalkRestart* function calls:
 
-```{r eval=FALSE}
+```{r}
 ##The data sets we used have not been published so the code below is unable to be run.
-ranks <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(), TRUE) # utilizes only gene seeds and generates p-values for ranks.
-ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c('phenotype1', 'phenotype2'), FALSE) # utilizes gene and phenotype seeds and does not generate p-values.
-ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c(), TRUE, 12, r=0.8, eta=0.6, tau=(1,0.5,1.5), phi=(1,0.5,1.5)) # utilizes only gene seeds, generates p-values, custom values for parameters r, eta, tau and phi for a complex network with three gene layers and three phenotype layers.
+#ranks <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(), TRUE) # utilizes only gene seeds and generates p-values for ranks.
+
+#ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c('phenotype1', 'phenotype2'), FALSE) # utilizes gene and phenotype seeds and does not generate p-values.
+
+#ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), c(), TRUE, 12, r=0.8, eta=0.6, tau=(1,0.5,1.5), phi=(1,0.5,1.5)) # utilizes only gene seeds, generates p-values, custom values for parameters r, eta, tau and phi for a complex network with three gene layers and three phenotype layers.
 ```
 
-If the *generatePvalues* parameter is TRUE, the output looks like this:
-```
-Gene    Score     P_value
-g1      1.9e-3    0.020000000
-g425    1.6e-3    0.030000000
-g77     1.3e-3    0.120000000
-...     ...       ...
-```
-If the generatePvalues parameter is FALSE, the output looks like this:
-```
-Gene    Score
-gene47  8.877424e-04
-gene202 8.219792e-04
-gene33  5.779120e-04
-...     ...     ...
-```
+If the *generatePvalues* parameter is TRUE, the output looks like this:  
+![](pValTrue.png)
 
+If the generatePvalues parameter is FALSE, the output looks like this:  
+![](pValFalse.png)
 
 ## <a id = "Example-Workflow"></a> Example Workflow
 
-```{r eval=FALSE}
-walkMatrix <- CreateWalkMatrix('file.txt')
-ranks <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c())
-ranks_with_pvalues <- RandomWalkRestart(walkMatrix ,c('gene1', 'gene2'), c('phenotype1'), generatePValue=TRUE, numCores=12)
+```{r}
+#walkMatrix <- CreateWalkMatrix('file.txt')
+#ranks <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c())
+#ranks_with_pvalues <- RandomWalkRestart(walkMatrix ,c('gene1', 'gene2'), c('phenotype1'), generatePValue=TRUE, numCores=12)
+#ranks_with_pvalues <- RandomWalkRestart(walkMatrix ,c('gene1', 'gene2'), c('phenotype1'), generatePValue=TRUE, numCores=12)
 ```
 
 

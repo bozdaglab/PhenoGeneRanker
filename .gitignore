@@ -2,4 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-.rproj
+.Rproj
+doc
+Meta
