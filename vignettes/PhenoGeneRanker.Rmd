@@ -19,20 +19,13 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(PhenoGeneRanker)
 ```
-# Table of Contents
-  - [Introduction](#Introduction)
-  - [Using the Functions](#Using-the-Functions)  
-    - [Input File Formatting](#Input-File-Formatting)  
-    - [CreateWalkMatrix](#CreateWalkMatrix)  
-    - [RandomWalkRestart](#randomwalkrestart)  
-  - [Example Workflow](#Example-Workflow)
-  - [Acknowledgements](#Acknowledgements)
-  
+
+
 ## <a id = "Introduction"></a> Introduction
 
 PhenoGeneRanker is a gene and phenotype prioritization tool that utilizes random walk with restart (RWR) on a multiplex heterogeneous gene-phenotype network. PhenoGeneRanker allows multi-layer gene and phenotype networks. It also calculates empirical p-values of gene ranking using random stratified sampling of genes/phenotypes based on their connectivity degree in the network. It is based on the work from the following article:
 
-Cagatay Dursun, Naoki Shimoyama, Mary Shimoyama, Michael Schläppi, and Serdar Bozdag. 2019. PhenoGeneRanker: A Tool for Gene Prioritization Using Complete Multiplex Heterogeneous Networks. In Proceedings of the 10th ACM International Conference on Bioinformatics, Computational Biology and Health Informatics (BCB ’19). Association for Computing Machinery, New York, NY, USA, 279–288. DOI:https://doi.org/10.1145/3307339.3342155
+Cagatay Dursun, Naoki Shimoyama, Mary Shimoyama, Michael Schläppi, and Serdar Bozdag. 2019. PhenoGeneRanker: A Tool for Gene Prioritization Using Complete Multiplex Heterogeneous Networks. In Proceedings of the 10th ACM International Conference on Bioinformatics, Computational Biology and Health Informatics (BCB ’19). Association for Computing Machinery, New York, NY, USA, 279–288. DOI: https://doi.org/10.1145/3307339.3342155
 
 # Install and Load PhenoGeneRanker
 
