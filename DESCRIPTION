@@ -1,7 +1,7 @@
 Package: PhenoGeneRanker
 Type: Package
 Title: PhenoGeneRanker: A gene and phenotype prioritization tool
-Version: 0.99.3
+Version: 0.99.4
 Authors@R: c(person("Cagatay", "Dursun", email="cagataydursun@gmail.com", role=c("aut")), 
             person("Serdar", "Bozdag", email="serdar.bozdag@marquette.edu", role="aut"),
            person("Jake", "Petrie", email="jacob.m.petrie@marquette.edu", role = "cre"))
