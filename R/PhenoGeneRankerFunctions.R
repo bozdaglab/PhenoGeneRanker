@@ -110,8 +110,8 @@ CheckSeeds <- function(Seeds, All_genes,All_Phenotypes){
   
   list_Seeds_Ok <- list(Genes_Seeds_Ok,Phenotype_Seeds_Ok)
   
-  print("Seeds below do not exist in the network: ")
-  print(paste(All_seeds_ko, sep=" "))
+  message("Seeds below do not exist in the network: ")
+  message(paste(All_seeds_ko, sep=" "))
   
   if ((length(Genes_Seeds_Ok) == 0) &&  (length(Phenotype_Seeds_Ok) ==0)){
     stop("Seeds not found in our network")
@@ -674,7 +674,7 @@ GeometricMean <- function(Scores, L, N) {
 #'   of ranked genes/phenotypes with two columns; Gene/Phenotype id, score.
 #'
 #' @examples
-#' print("The data sets we used have not been published so the code below is unable to be run.")
+#' message("The data sets we used have not been published so the code below is unable to be run.")
 #' #ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
 #' #ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
 #' #ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
@@ -813,8 +813,8 @@ RandomWalkRestartSingle <- function(walkMatrix, r, Seeds_Score) {
     iter <- iter + 1
   }
   
-  print("RWR-MH number of iteration: ")
-  print(iter - 1)
+  message("RWR-MH number of iteration: ")
+  message(iter - 1)
   return(prox_vector)
 }
 GetConnectivity <- function(NetworkDF, gene_pool_nodes_sorted,
@@ -868,7 +868,7 @@ GetConnectivity <- function(NetworkDF, gene_pool_nodes_sorted,
 #' @export
 #'
 #' @examples
-#' print("The data sets we used have not been published so the code below is unable to be run")
+#' message("The data sets we used have not been published so the code below is unable to be run")
 #' #CreateWalkMatrix('myInput.txt')
 #' #CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
 #' 
