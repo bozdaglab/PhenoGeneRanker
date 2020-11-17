@@ -1,5 +1,19 @@
 ReadSettings <- function(input.file){
   
+  org.input.file <- input.file
+  # if can't find the input.file search the package external data
+  if( !file.exists(input.file)){
+    input.file <- system.file(
+      "extdata",
+      input.file,
+      package = "PhenoGeneRanker"
+    )
+  }
+  
+  if(!file.exists(input.file)){
+    input.file <- org.input.file
+  }
+  
   files <-  read.table(input.file, header=TRUE,sep="\t", 
                        stringsAsFactors = FALSE)
   
@@ -16,6 +30,12 @@ ReadNetworkLayers <- function(filesDF){
   NetworkLayers <- vector("list",nrow(filesDF))
   j <- 1
   for(f in filesDF$file_name){
+    f <- system.file(
+      "extdata",
+      f,
+      package = "PhenoGeneRanker"
+    )
+    
     NetworkLayers[[j]][["DF"]] <-  read.table(f, header=TRUE, sep="\t", 
                                               stringsAsFactors = FALSE)
     NetworkLayers[[j]][["DF"]]$from <- as.character(
@@ -110,11 +130,13 @@ CheckSeeds <- function(Seeds, All_genes,All_Phenotypes){
   
   list_Seeds_Ok <- list(Genes_Seeds_Ok,Phenotype_Seeds_Ok)
   
-  message("Seeds below do not exist in the network: ")
-  message(paste(All_seeds_ko, sep=" "))
+  if(length(All_seeds_ko) != 0){
+    print("Seeds below do not exist in the network: ")
+    print(paste(All_seeds_ko, sep=" "))
+  }
   
   if ((length(Genes_Seeds_Ok) == 0) &&  (length(Phenotype_Seeds_Ok) ==0)){
-    stop("Seeds not found in our network")
+    stop("Seeds not found in the network")
   } else {
     return(list(Genes_Seeds=Genes_Seeds_Ok, Pheno_Seeds=Phenotype_Seeds_Ok))
   }
@@ -485,6 +507,7 @@ CreateGeneTransitionMultiplexNetwork <- function(SupraAdjacencyMatrix,
   
   
   partLen <- floor(N * LG/numCores)
+  
   # below can only happen with toy samples
   if (partLen == 0) {
     stop("Assigned numCores is greater than data length! Assign less!")
@@ -504,11 +527,10 @@ CreateGeneTransitionMultiplexNetwork <- function(SupraAdjacencyMatrix,
   cl <- makeCluster(numCores + 1)
   
   registerDoParallel(cl)
-  
   Transition_Multiplex_Network_Result <- foreach(i = 1:numCores,
                                                  .packages = "Matrix") %dopar% 
                                                  {
-                                                   for (j in parts[[i]]["start"]:parts[[i]]["end"]) {
+                                                   for (j in parts[[i]]$start:parts[[i]]$end) {
                                                      if (Row_Sum_Bipartite[j] != 0) {
                                                        Transition_Multiplex_Network[, j] <- ((1 - lambda) * 
                                                                                                SupraAdjacencyMatrix[, j])/Col_Sum_Multiplex[j]
@@ -519,7 +541,7 @@ CreateGeneTransitionMultiplexNetwork <- function(SupraAdjacencyMatrix,
                                                    }
                                                    return(Transition_Multiplex_Network)
                                                  }
-  
+
   Transition_Multiplex_Network <- Reduce("+", 
                                          Transition_Multiplex_Network_Result)
   stopCluster(cl)
@@ -564,7 +586,7 @@ CreatePhenoTransitionMultiplexNetwork <- function(SupraAdjacencyMatrixPheno,
   Transition_Multiplex_Network_Pheno_Result <- foreach(i = 1:numCores,
                                                        .packages = "Matrix") %dopar% 
                                                        {
-                                                         for (j in parts[[i]]["start"]:parts[[i]]["end"]) {
+                                                         for (j in parts[[i]]$start:parts[[i]]$end) {
                                                            if (Col_Sum_Bipartite[j] != 0) {
                                                              Transition_Multiplex_Network_Pheno[, j] <- ((1 - lambda) * 
                                                                                                            SupraAdjacencyMatrixPheno[, j])/Col_Sum_Multiplex[j]
@@ -674,13 +696,12 @@ GeometricMean <- function(Scores, L, N) {
 #'   of ranked genes/phenotypes with two columns; Gene/Phenotype id, score.
 #'
 #' @examples
-#' message("The data sets we used have not been published so the code below is unable to be run.")
-#' #ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
-#' #ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
-#' #ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
-#'  #      c('phenotype1', 'phenotype2'), FALSE)
-#' #ranksWithPval <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
-#'  #      c(), TRUE, 12, 0.7, 0.6, tau =(1,0.5,1.5), phi =(1,0.5,1.5))
+#' ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
+#' ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
+#' ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
+#'        c('phenotype1', 'phenotype2'), FALSE)
+#' ranksWithPval <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
+#'        c(), TRUE, 12, 0.7, 0.6, tau =(1,0.5,1.5), phi =(1,0.5,1.5))
 #' 
 RandomWalkRestart <- function(walkMatrix, geneSeeds, phenoSeeds, 
                               generatePValue = TRUE, numCores = 1,
@@ -813,8 +834,8 @@ RandomWalkRestartSingle <- function(walkMatrix, r, Seeds_Score) {
     iter <- iter + 1
   }
   
-  message("RWR-MH number of iteration: ")
-  message(iter - 1)
+  print("RWR-MH number of iteration: ")
+  print(iter - 1)
   return(prox_vector)
 }
 GetConnectivity <- function(NetworkDF, gene_pool_nodes_sorted,
@@ -868,9 +889,8 @@ GetConnectivity <- function(NetworkDF, gene_pool_nodes_sorted,
 #' @export
 #'
 #' @examples
-#' message("The data sets we used have not been published so the code below is unable to be run")
-#' #CreateWalkMatrix('myInput.txt')
-#' #CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
+#' CreateWalkMatrix('myInput.txt')
+#' CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
 #' 
 #' 
 CreateWalkMatrix <- function(inputFileName, numCores = 1, delta = 0.5, 
@@ -893,7 +913,6 @@ CreateWalkMatrix <- function(inputFileName, numCores = 1, delta = 0.5,
   
   SupraAdjacencyMatrix <- CreateSupraadjacencyMatrix(FullNet, "gene", N, LG, 
                                                      Parameters$zeta, TRUE)
-  
   SupraAdjacencyMatrixPheno <- CreateSupraadjacencyMatrix(FullNet, "phenotype", 
                                                           M, LP, 
                                                           Parameters$delta,
@@ -905,10 +924,8 @@ CreateWalkMatrix <- function(inputFileName, numCores = 1, delta = 0.5,
   ## We expand the biparite graph to fit the multiplex dimensions.  The biparti
   ## matrix has now NL x MK The genes in all the layers have to point to the
   ## phenotypes in all layers
-  
   SupraBipartiteMatrix <- CreateSuprabipartiteMatrix(BipartiteMatrix, N, M, LG, 
                                                      LP)
-  # Parameters$lambda)
   Transition_Gene_Phenoivar <- CreateTransitionMatrix(SupraBipartiteMatrix, N, 
                                                       M, LG, LP, 
                                                       Parameters$lambda, FALSE)
@@ -921,7 +938,7 @@ CreateWalkMatrix <- function(inputFileName, numCores = 1, delta = 0.5,
     N, LG, 
     Parameters$lambda, 
     numCores)
-  
+
   # CREATE TRANSITION MULTIPLEX NETWORK FOR CULTIVARS t1 <- Sys.time()
   Pheno_Transition_Multiplex_Network <- CreatePhenoTransitionMultiplexNetwork(
     SupraAdjacencyMatrixPheno, 
@@ -1006,16 +1023,16 @@ GenerateRandomSeedVector <- function(WM, geneSeeds, phenoSeeds, S = 1000,
   if (length(geneSeeds) != 0) {
     RandomgeneSeeds <- GenerateRandomSeeds(geneSeeds, GeneConnectivity, S, 
                                            no.groups.gene, TRUE)
-    if (length(geneSeeds) != 1 && any(duplicated(RandomgeneSeeds[1:S]))) 
-      warning("WARN: Duplicated random 'gene' seeds generated!")
+    # if (length(geneSeeds) != 1 && any(duplicated(RandomgeneSeeds[1:S]))) 
+    #   warning("WARN: Duplicated random 'gene' seeds generated!")
   }
   
   RandomphenoSeeds <- list()
   if (length(phenoSeeds) != 0) {
     RandomphenoSeeds <- GenerateRandomSeeds(phenoSeeds, PhenoConnectivity, 
                                             S, no.groups.pheno, TRUE)
-    if (length(phenoSeeds) != 1 && any(duplicated(RandomphenoSeeds[1:S]))) 
-      warning("WARN: Duplicated random 'phenotype' seeds generated!")
+    # if (length(phenoSeeds) != 1 && any(duplicated(RandomphenoSeeds[1:S]))) 
+    #   warning("WARN: Duplicated random 'phenotype' seeds generated!")
   }
   
   return(list(gene = RandomgeneSeeds, phenotype = RandomphenoSeeds))

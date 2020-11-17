@@ -1,0 +1,6 @@
+type	file_name
+gene	gene_layer1.txt
+gene	gene_layer2.txt
+phenotype	ptype_layer1.txt
+phenotype	ptype_layer2.txt
+bipartite	gene_ptype.txt
