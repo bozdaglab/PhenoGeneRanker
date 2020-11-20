@@ -692,8 +692,8 @@ GeometricMean <- function(Scores, L, N) {
 #'   It is highly recommended to use S=1000.
 #' @return If the parameter generatePValue is TRUE, then this function returns a
 #'   data frame of ranked genes/phenotypes with p-values with three columns; Gene/Phenotype
-#'   id, score, p-value. If generatePValue is FALSE, then it returns a data frame
-#'   of ranked genes/phenotypes with two columns; Gene/Phenotype id, score.
+#'   ID, score, p-value. If generatePValue is FALSE, then it returns a data frame
+#'   of ranked genes/phenotypes with two columns; Gene/Phenotype ID, score.
 #'
 #' @examples
 #' ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)

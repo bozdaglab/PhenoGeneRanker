@@ -35,9 +35,8 @@ This returns a list containing the walk matrix, a sorted list of gene ids, a sor
 Generates a Walk Matrix (Transition Matrix) from Gene and Phenotype networks for RWR.
 }
 \examples{
-print("The data sets we used have not been published so the code below is unable to be run")
-#CreateWalkMatrix('myInput.txt')
-#CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
+CreateWalkMatrix('myInput.txt')
+CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
 
 
 }

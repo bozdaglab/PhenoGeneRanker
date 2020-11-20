@@ -13,7 +13,8 @@ RandomWalkRestart(
   r = 0.7,
   eta = 0.5,
   tau = NULL,
-  phi = NULL
+  phi = NULL,
+  S = 1000
 )
 }
 \arguments{
@@ -45,12 +46,15 @@ sum up to the same number of gene layers. Default value gives equal weight to ge
 layer in the complex gene and phenotype network. Each value of the vector
 corresponds to the order of the network files in the input file of CreateWalkMatrix function. The weights must
 sum up to the same number of phenotype layers. Default value gives equal weight to phenotype layers.}
+
+\item{S}{This is the number of random samples to be used for p-value calculation
+It is highly recommended to use S=1000.}
 }
 \value{
 If the parameter generatePValue is TRUE, then this function returns a
   data frame of ranked genes/phenotypes with p-values with three columns; Gene/Phenotype
-  id, score, p-value. If generatePValue is FALSE, then it returns a data frame
-  of ranked genes/phenotypes with two columns; Gene/Phenotype id, score.
+  ID, score, p-value. If generatePValue is FALSE, then it returns a data frame
+  of ranked genes/phenotypes with two columns; Gene/Phenotype ID, score.
 }
 \description{
 This method runs the random walk with restart on the provided
@@ -59,12 +63,11 @@ This method runs the random walk with restart on the provided
   TRUE then it generates p-values along with the ranks.
 }
 \examples{
-print("The data sets we used have not been published so the code below is unable to be run.")
-#ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
-#ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
-#ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
- #      c('phenotype1', 'phenotype2'), FALSE)
-#ranksWithPval <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
- #      c(), TRUE, 12, 0.7, 0.6, tau =(1,0.5,1.5), phi =(1,0.5,1.5))
+ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
+ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
+ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
+       c('phenotype1', 'phenotype2'), FALSE)
+ranksWithPval <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
+       c(), TRUE, 12, 0.7, 0.6, tau =(1,0.5,1.5), phi =(1,0.5,1.5))
 
 }
