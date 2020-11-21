@@ -198,9 +198,11 @@ CreateSupraadjacencyMatrix <- function(WholeNet, type, N, L, zeta,
   
   if (getDoParWorkers() > 1) 
     registerDoSEQ()
-  cl <- makeCluster(L + 1)
+
+  cl <- makeCluster(L)
+  
   registerDoParallel(cl)
-  #globalVariables("i")
+  
   i <- 1
   SupraAdjacencyResult <- foreach(i = 1:L, .packages = c("igraph",
                                                          "Matrix")) %dopar% 
