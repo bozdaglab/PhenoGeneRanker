@@ -63,11 +63,10 @@ This method runs the random walk with restart on the provided
   TRUE then it generates p-values along with the ranks.
 }
 \examples{
-ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
-ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
-ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
-       c('phenotype1', 'phenotype2'), FALSE)
-ranksWithPval <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
-       c(), TRUE, 12, 0.7, 0.6, tau =(1,0.5,1.5), phi =(1,0.5,1.5))
+wm <- CreateWalkMatrix('input_file.txt')
+ranksWithoutPVal <- RandomWalkRestart(wm, c('g1', 'g2'), c('p1'), FALSE)
+ranksWithPVal <- RandomWalkRestart(wm, c('g1', 'g2'), c(), TRUE, S=10)
+ranksWithoutPval <- RandomWalkRestart(wm, c('g1'), c(),
+       FALSE, 1, 0.5, 0.6, tau=c(1.5,0.5), phi=c(0.5,1.5))
 
 }
