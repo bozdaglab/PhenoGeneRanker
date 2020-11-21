@@ -696,12 +696,11 @@ GeometricMean <- function(Scores, L, N) {
 #'   of ranked genes/phenotypes with two columns; Gene/Phenotype ID, score.
 #'
 #' @examples
-#' ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
-#' ranksWithPVal <- RandomWalkRestart(walkMatrix, c('gene1', 'gene2'), c(),TRUE)
-#' ranks <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
-#'        c('phenotype1', 'phenotype2'), FALSE)
-#' ranksWithPval <- RandomWalkRestart(CreateWalkMatrix('myFile.txt'),c('gene1'), 
-#'        c(), TRUE, 12, 0.7, 0.6, tau =(1,0.5,1.5), phi =(1,0.5,1.5))
+#' wm <- CreateWalkMatrix('input_file.txt')
+#' ranksWithoutPVal <- RandomWalkRestart(wm, c('g1', 'g2'), c('p1'), FALSE)
+#' ranksWithPVal <- RandomWalkRestart(wm, c('g1', 'g2'), c(), TRUE, S=10)
+#' ranksWithoutPval <- RandomWalkRestart(wm, c('g1'), c(),
+#'        FALSE, 1, 0.5, 0.6, tau=c(1.5,0.5), phi=c(0.5,1.5))
 #' 
 RandomWalkRestart <- function(walkMatrix, geneSeeds, phenoSeeds, 
                               generatePValue = TRUE, numCores = 1,
@@ -889,8 +888,8 @@ GetConnectivity <- function(NetworkDF, gene_pool_nodes_sorted,
 #' @export
 #'
 #' @examples
-#' CreateWalkMatrix('myInput.txt')
-#' CreateWalkMatrix('file.txt', detectCores(), 0.4, 0.7, 0.9)
+#' wm <- CreateWalkMatrix('input_file.txt')
+#' customWm <- CreateWalkMatrix('input_file.txt', numCores=1, delta=0.7, zeta=0.7, lambda=0.7)
 #' 
 #' 
 CreateWalkMatrix <- function(inputFileName, numCores = 1, delta = 0.5, 
