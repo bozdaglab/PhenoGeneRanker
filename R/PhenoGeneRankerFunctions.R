@@ -862,24 +862,15 @@ GetConnectivity <- function(NetworkDF, gene_pool_nodes_sorted,
 #' @description Generates a Walk Matrix (Transition Matrix) from Gene and Phenotype networks for RWR.
 #'
 #' @param inputFileName The name of the text file that contains the names of
-# gene and phenotype network files. This text file is made
-# from two columns that are tab-separated. The first row is header with
-# 'type' and 'file_name'. Network files can be either gene, phenotype, or bipartite files.
-# Each network file is composed of three columns 'from', 'to', and 'weight' columns
-# which are all tab-separated. For gene/phenotype network layers, the 'from' and
-# 'to' columns will have genes and phenotypes. The weight
-# column will have the weight of the interactions of the genes/phenotypes,
-# for unweighted network all weights must have a value of 1. For a bipartite
-# network file, the 'from' column must have genes, the 'to' column must have phenotypes, the
-# meaning and usage of weight is similar to the gene and phenotype layers. For
-# more information on the file formatting, please check the vignette. 
+#' gene and phenotype network files. For more information on the file formatting, 
+#' please refer the vignette. 
 #' @param numCores This is the number of cores used for parallel processing.
 #'
 #' @param delta This is the probability of jumping between gene layers. High delta means 
-#' RWR  is high likely to jump to other layers in gene multiplex netwrok. It has a default value of 0.5.
+#' RWR  is high likely to jump to other layers in gene multiplex network. It has a default value of 0.5.
 #' @param zeta This is the probability of jumping between phenotype layers. High zeta means 
-#' RWR  is high likely to jump to other layers in phenotype multiplex netwrok. It has a default value of 0.5.
-#' @param lambda This is the probability of jumpting between gene and phenotype multiplex networks. High lambda
+#' RWR  is high likely to jump to other layers in phenotype multiplex network. It has a default value of 0.5.
+#' @param lambda This is the probability of jumping between gene and phenotype multiplex networks. High lambda
 #' means RWR is more likely to exploit the bipartite relation. It has a default value of 0.5.
 #'
 

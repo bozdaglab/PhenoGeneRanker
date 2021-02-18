@@ -13,7 +13,9 @@ CreateWalkMatrix(
 )
 }
 \arguments{
-\item{inputFileName}{The name of the text file that contains the names of}
+\item{inputFileName}{The name of the text file that contains the names of
+gene and phenotype network files. For more information on the file formatting, 
+please check the vignette.}
 
 \item{numCores}{This is the number of cores used for parallel processing.}
 
@@ -21,9 +23,9 @@ CreateWalkMatrix(
 RWR  is high likely to jump to other layers in gene multiplex netwrok. It has a default value of 0.5.}
 
 \item{zeta}{This is the probability of jumping between phenotype layers. High zeta means 
-RWR  is high likely to jump to other layers in phenotype multiplex netwrok. It has a default value of 0.5.}
+RWR  is high likely to jump to other layers in phenotype multiplex network. It has a default value of 0.5.}
 
-\item{lambda}{This is the probability of jumpting between gene and phenotype multiplex networks. High lambda
+\item{lambda}{This is the probability of jumping between gene and phenotype multiplex networks. High lambda
 means RWR is more likely to exploit the bipartite relation. It has a default value of 0.5.}
 }
 \value{

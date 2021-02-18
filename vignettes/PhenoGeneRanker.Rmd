@@ -1,7 +1,7 @@
 ---
 title: "PhenoGeneRanker"
-author: "Cagatay Dursun, Jake Petrie,  Serdar Bozdag"
-date: "11/17/2020"
+author: "Cagatay Dursun, Jake Petrie"
+date: "2/18/2020"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{PhenoGeneRanker}
@@ -43,7 +43,7 @@ library(PhenoGeneRanker)
 
 
 ## <a id = "Input-File-Formatting"></a> Input File Formatting
-The CreateWalkMatrix function takes in an _input file_ as a parameter. This file is a ".txt" file with two tab-separated columns which holds the network files you would like to run PhenoGeneRanker. The header row should be “type” and “file_name”. The type column contains the type of the network file. It can be gene, phenotype, or bipartite. The file_name column stores the name of your network file along with the “.txt” extension. Any number of gene or phenotype files can be used theoretically, but there are practical limits which depend on the capacity of the computer that will run the PhenoGeneRanker.    
+The CreateWalkMatrix function takes in an _input file_ as a parameter. This file is a ".txt" file with two tab-separated columns which holds the network files that PhenoGeneRanker utilizes. The header row should be “type” and “file_name”. The type column contains the type of the network file. It can be gene, phenotype, or bipartite. The file_name column stores the name of your network file along with the “.txt” extension. Any number of gene or phenotype files can be used theoretically, but there are practical limits which depend on the capacity of the computer that will run the PhenoGeneRanker.    
 
 An example _input file_ is shown below:  
 ```{r}
