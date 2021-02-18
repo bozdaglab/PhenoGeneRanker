@@ -1,9 +1,8 @@
 Package: PhenoGeneRanker
 Type: Package
 Title: PhenoGeneRanker: A gene and phenotype prioritization tool
-Version: 0.99.14
-Author: Cagatay Dursun <cagataydursun@gmail.com>
-Maintainer: Cagatay Dursun <cagataydursun@gmail.com>
+Version: 0.99.15
+Authors@R: c(person(given="Cagatay", family="Dursun", email="cagataydursun@gmail.com", role=c("aut", "cre")))
 Description: This package is a gene/phenotype prioritization tool that utilizes 
     multiplex heterogeneous gene phenotype network. PhenoGeneRanker allows multi-layer gene
     and phenotype networks. It also calculates empirical p-values of gene/phenotype ranking

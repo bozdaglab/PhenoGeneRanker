@@ -1,3 +1,8 @@
+# PhenoGeneRanker 0.99.15
+======================
+
+- Fixed the description for inpuFileName argument of CreateWalkMatrix() function
+
 # PhenoGeneRanker 0.99.14
 ======================
 
