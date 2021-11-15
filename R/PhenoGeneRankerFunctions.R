@@ -30,11 +30,11 @@ ReadNetworkLayers <- function(filesDF){
   NetworkLayers <- vector("list",nrow(filesDF))
   j <- 1
   for(f in filesDF$file_name){
-    f <- system.file(
-      "extdata",
-      f,
-      package = "PhenoGeneRanker"
-    )
+    #f <- system.file(
+    #  "extdata",
+    #  f,
+    #  package = "PhenoGeneRanker"
+    #)
     
     NetworkLayers[[j]][["DF"]] <-  read.table(f, header=TRUE, sep="\t", 
                                               stringsAsFactors = FALSE)
